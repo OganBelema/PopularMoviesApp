@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_name">Movies</string>
+    <string name="popular_movies">Popular Movies</string>
+    <string name="top_rated_movies">Top Rated Movies</string>
+    <string name="loading_movies">Loading movies</string>
+    <string name="movie_poster">Movie poster image</string>
+    <string name="filter">Filter</string>
+    <string name="network_error_message">Error fetching data. Please try again</string>
+    <string name="release_date">RELEASE DATE: %s</string>
+    <string name="vote_average">VOTE AVERAGE: %.1f</string>
 </resources>
