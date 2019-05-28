@@ -15,12 +15,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
@@ -63,20 +63,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     public void setMovies(@NonNull final List<Movie> movies){
 
-        mDisposable = Observable.fromCallable(new Callable<DiffUtil.DiffResult>() {
-            @Override
-            public DiffUtil.DiffResult call() {
-                return DiffUtil
-                        .calculateDiff(new MoviesDiffCallback(mMovies, movies), false);
-            }
-        }).subscribeOn(Schedulers.io())
+        mDisposable = Observable.fromCallable(() -> DiffUtil
+                .calculateDiff(new MoviesDiffCallback(mMovies, movies), false)).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<DiffUtil.DiffResult>() {
-                    @Override
-                    public void accept(DiffUtil.DiffResult diffResult) {
-                        mMovies = (ArrayList<Movie>) movies;
-                        diffResult.dispatchUpdatesTo(MovieAdapter.this);
-                    }
+                .subscribe(diffResult -> {
+                    mMovies = (ArrayList<Movie>) movies;
+                    diffResult.dispatchUpdatesTo(MovieAdapter.this);
                 });
 
     }
@@ -89,18 +81,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView mMoviePosterImageView;
+        @BindView(R.id.moviePosterImageView)
+        ImageView mMoviePosterImageView;
 
         MovieViewHolder(@NonNull View itemView) {
             super(itemView);
-            mMoviePosterImageView = itemView.findViewById(R.id.moviePosterImageView);
+            ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onMovieItemClicked(mMovies.get(getAdapterPosition()));
-                }
-            });
+            itemView.setOnClickListener(v ->
+                    mListener.onMovieItemClicked(mMovies.get(getAdapterPosition())));
         }
 
         void bindData(final Movie movie){

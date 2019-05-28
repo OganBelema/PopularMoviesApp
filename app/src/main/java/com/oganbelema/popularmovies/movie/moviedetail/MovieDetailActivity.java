@@ -1,5 +1,6 @@
 package com.oganbelema.popularmovies.movie.moviedetail;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
@@ -10,57 +11,58 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.oganbelema.popularmovies.R;
+import com.oganbelema.popularmovies.movie.Movie;
 import com.oganbelema.popularmovies.network.ServiceGenerator;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity {
 
-    public static final String MOVIE_TITLE = "movie_title";
-    public static final String RELEASE_DATE = "movie_release_date";
-    public static final String MOVIE_POSTER = "movie_poster";
-    public static final String VOTE_AVERAGE = "vote_average";
-    public static final String PLOT_SYNOPSIS = "plot_synopsis";
+    public static final String MOVIE = "movie";
 
-    private ImageView mMoviePosterImageView;
-    private TextView mMovieTitleTextView;
-    private TextView mMovieReleaseDateTextView;
-    private TextView mVoteAverageTextView;
-    private TextView mMovieOverviewTextView;
+    @BindView(R.id.moviePosterImageView)
+    ImageView mMoviePosterImageView;
+
+    @BindView(R.id.movieTitleTextView)
+    TextView mMovieTitleTextView;
+
+    @BindView(R.id.releaseDateTextView)
+    TextView mMovieReleaseDateTextView;
+
+    @BindView(R.id.voteAverageTextView)
+    TextView mVoteAverageTextView;
+
+    @BindView(R.id.movieOverviewTextView)
+    TextView mMovieOverviewTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
-        mMoviePosterImageView = findViewById(R.id.moviePosterImageView);
-        mMovieTitleTextView = findViewById(R.id.movieTitleTextView);
-        mMovieReleaseDateTextView = findViewById(R.id.releaseDateTextView);
-        mVoteAverageTextView = findViewById(R.id.voteAverageTextView);
-        mMovieOverviewTextView = findViewById(R.id.movieOverviewTextView);
+        ButterKnife.bind(this);
 
         Intent movieIntent = getIntent();
 
         if (movieIntent != null){
-            String movieTitle = movieIntent.getStringExtra(MOVIE_TITLE);
-            String moviePosterPath = movieIntent.getStringExtra(MOVIE_POSTER);
-            String releaseDate = movieIntent.getStringExtra(RELEASE_DATE);
-            double voteAverage = movieIntent.getDoubleExtra(VOTE_AVERAGE, 0);
-            String movieOverview = movieIntent.getStringExtra(PLOT_SYNOPSIS);
+            Movie movie = movieIntent.getParcelableExtra(MOVIE);
 
-            displayDataOnView(movieTitle, moviePosterPath, releaseDate, voteAverage, movieOverview);
+            displayDataOnView(movie);
         }
     }
 
-    private void displayDataOnView(String movieTitle, String moviePosterPath, String releaseDate,
-                                   double voteAverage, String movieOverview) {
-        setTitle(movieTitle);
+    private void displayDataOnView(@Nullable Movie movie) {
+        if (movie != null){
+            setTitle(movie.getTitle());
 
-        Picasso.get().load(ServiceGenerator.IMAGE_URL  + moviePosterPath)
-                .into(mMoviePosterImageView);
-        mMovieTitleTextView.setText(movieTitle);
-        mMovieReleaseDateTextView.setText(getString(R.string.release_date, releaseDate));
-        mVoteAverageTextView.setText(getString(R.string.vote_average, voteAverage));
-        mMovieOverviewTextView.setText(movieOverview);
+            Picasso.get().load(ServiceGenerator.IMAGE_URL  + movie.getPosterPath())
+                    .into(mMoviePosterImageView);
+            mMovieTitleTextView.setText(movie.getTitle());
+            mMovieReleaseDateTextView.setText(getString(R.string.release_date, movie.getReleaseDate()));
+            mVoteAverageTextView.setText(getString(R.string.vote_average, movie.getVoteAverage()));
+            mMovieOverviewTextView.setText(movie.getOverview());
+        }
     }
 
     @Override

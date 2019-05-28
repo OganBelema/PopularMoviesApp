@@ -2,7 +2,6 @@ package com.oganbelema.popularmovies.movie.movielist;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +26,8 @@ import com.oganbelema.popularmovies.network.NetworkCallResult;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Response;
 
 public class MovieListActivity extends AppCompatActivity implements MovieAdapter.Listener {
@@ -42,9 +43,11 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
     private MovieViewModel mMovieViewModel;
 
-    private Group mLoadingIndicatorViews;
+    @BindView(R.id.loaderViews)
+    Group mLoadingIndicatorViews;
 
-    private RecyclerView mMoviesRecyclerView;
+    @BindView(R.id.moviesRecyclerView)
+    RecyclerView mMoviesRecyclerView;
 
     private MovieAdapter mMovieAdapter;
 
@@ -55,9 +58,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popular_movies_list);
 
-        mLoadingIndicatorViews = findViewById(R.id.loaderViews);
-
-        mMoviesRecyclerView = findViewById(R.id.moviesRecyclerView);
+        ButterKnife.bind(this);
 
         mMovieViewModel = ViewModelProviders.of(this, mMovieViewModelFactory)
                 .get(MovieViewModel.class);
@@ -107,27 +108,20 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
         showLoaderView();
 
         mMovieViewModel.getPopularMovies().observe(this,
-                new Observer<NetworkCallResult<MovieResponse>>() {
-            @Override
-            public void onChanged(NetworkCallResult<MovieResponse>
-                                          popularMovieResponseNetworkCallResult) {
-                if (popularMovieResponseNetworkCallResult != null){
+                popularMovieResponseNetworkCallResult -> {
+                    if (popularMovieResponseNetworkCallResult != null){
 
-                    processMovieNetworkCallResult(popularMovieResponseNetworkCallResult);
-                }
-            }
-        });
+                        processMovieNetworkCallResult(popularMovieResponseNetworkCallResult);
+                    }
+                });
     }
 
     private void getTopRatedMovies(){
         showLoaderView();
 
-        mMovieViewModel.getTopRatedMovies().observe(this, new Observer<NetworkCallResult<MovieResponse>>() {
-            @Override
-            public void onChanged(NetworkCallResult<MovieResponse> movieResponseNetworkCallResult) {
-                if (movieResponseNetworkCallResult != null){
-                    processMovieNetworkCallResult(movieResponseNetworkCallResult);
-                }
+        mMovieViewModel.getTopRatedMovies().observe(this, movieResponseNetworkCallResult -> {
+            if (movieResponseNetworkCallResult != null){
+                processMovieNetworkCallResult(movieResponseNetworkCallResult);
             }
         });
     }
@@ -174,15 +168,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     public void onMovieItemClicked(Movie movie) {
         Intent startMovieDetailActivityIntent =
                 new Intent(this, MovieDetailActivity.class);
-        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.MOVIE_TITLE, movie.getTitle());
-        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.RELEASE_DATE,
-                movie.getReleaseDate());
-        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.MOVIE_POSTER,
-                movie.getPosterPath());
-        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.VOTE_AVERAGE,
-                movie.getVoteAverage());
-        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.PLOT_SYNOPSIS,
-                movie.getOverview());
+        startMovieDetailActivityIntent.putExtra(MovieDetailActivity.MOVIE, movie);
         startActivity(startMovieDetailActivityIntent);
 
     }
