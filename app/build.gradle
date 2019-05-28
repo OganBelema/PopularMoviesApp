@@ -55,5 +55,5 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.0.1'
 
     //design
-    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'com.google.android.material:material:1.0.0'
 }
