@@ -1,8 +1,10 @@
-package com.oganbelema.popularmovies.movie;
+package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
+
+import com.oganbelema.popularmovies.movie.model.Movie;
 
 import java.util.List;
 

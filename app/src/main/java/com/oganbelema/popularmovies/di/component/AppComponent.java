@@ -2,8 +2,8 @@ package com.oganbelema.popularmovies.di.component;
 
 import com.oganbelema.popularmovies.di.module.AppModule;
 import com.oganbelema.popularmovies.di.module.NetworkModule;
-import com.oganbelema.popularmovies.movie.moviedetail.MovieDetailActivity;
-import com.oganbelema.popularmovies.movie.movielist.MovieListActivity;
+import com.oganbelema.popularmovies.movie.ui.MovieDetailActivity;
+import com.oganbelema.popularmovies.movie.ui.MovieListActivity;
 
 import javax.inject.Singleton;
 

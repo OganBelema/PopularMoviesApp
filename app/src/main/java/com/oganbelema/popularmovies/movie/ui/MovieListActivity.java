@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie.movielist;
+package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
@@ -15,14 +15,12 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.oganbelema.popularmovies.PopularMoviesApp;
-import com.oganbelema.popularmovies.movie.MovieAdapter;
-import com.oganbelema.popularmovies.movie.MovieViewModelFactory;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModelFactory;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.Movie;
-import com.oganbelema.popularmovies.movie.MovieRepository;
-import com.oganbelema.popularmovies.movie.MovieViewModel;
-import com.oganbelema.popularmovies.movie.MovieResponse;
-import com.oganbelema.popularmovies.movie.moviedetail.MovieDetailActivity;
+import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.movie.repository.MovieRepository;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModel;
+import com.oganbelema.popularmovies.movie.model.MovieResponse;
 import com.oganbelema.popularmovies.network.NetworkCallResult;
 
 import java.util.List;

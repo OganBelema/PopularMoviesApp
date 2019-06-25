@@ -15,15 +15,15 @@
         tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".movie.movielist.MovieListActivity">
+        <activity android:name=".movie.ui.MovieListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".movie.moviedetail.MovieDetailActivity"
-            android:parentActivityName=".movie.movielist.MovieListActivity"/>
+        <activity android:name=".movie.ui.MovieDetailActivity"
+            android:parentActivityName=".movie.ui.MovieListActivity"/>
 
     </application>
 

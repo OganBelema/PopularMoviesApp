@@ -1,7 +1,8 @@
-package com.oganbelema.popularmovies.movie;
+package com.oganbelema.popularmovies.movie.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.oganbelema.popularmovies.movie.model.Movie;
 
 import java.util.List;
 

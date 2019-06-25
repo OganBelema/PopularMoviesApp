@@ -1,8 +1,9 @@
-package com.oganbelema.popularmovies.movie;
+package com.oganbelema.popularmovies.movie.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.oganbelema.popularmovies.movie.model.MovieResponse;
 import com.oganbelema.popularmovies.network.MoviesApi;
 import com.oganbelema.popularmovies.network.NetworkCallResult;
 

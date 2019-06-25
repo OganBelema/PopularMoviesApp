@@ -1,6 +1,6 @@
 package com.oganbelema.popularmovies.network;
 
-import com.oganbelema.popularmovies.movie.MovieResponse;
+import com.oganbelema.popularmovies.movie.model.MovieResponse;
 
 import io.reactivex.Single;
 import retrofit2.Response;

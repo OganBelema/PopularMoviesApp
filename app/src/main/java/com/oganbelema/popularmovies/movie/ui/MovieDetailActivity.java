@@ -1,8 +1,7 @@
-package com.oganbelema.popularmovies.movie.moviedetail;
+package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.Movie;
+import com.oganbelema.popularmovies.movie.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
