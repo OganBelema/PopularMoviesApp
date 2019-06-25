@@ -26,3 +26,8 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    daggerVersion = '2.13'
+    loggingInterceptorVersion = '3.9.0'
+}

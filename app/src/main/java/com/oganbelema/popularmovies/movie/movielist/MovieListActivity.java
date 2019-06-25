@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.movie.MovieAdapter;
 import com.oganbelema.popularmovies.movie.MovieViewModelFactory;
 import com.oganbelema.popularmovies.R;
@@ -26,20 +27,23 @@ import com.oganbelema.popularmovies.network.NetworkCallResult;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Response;
 
-public class MovieListActivity extends AppCompatActivity implements MovieAdapter.Listener {
+public class MovieListActivity extends AppCompatActivity implements MovieAdapter.MovieItemOnClickListener {
 
     private final String TAG = MovieListActivity.class.getSimpleName();
 
     private static final int GRID_SPAN = 2;
 
-    private final MovieRepository mMovieRepository = new MovieRepository();
+    @Inject
+    public MovieRepository mMovieRepository;
 
-    private final MovieViewModelFactory mMovieViewModelFactory =
-            new MovieViewModelFactory(mMovieRepository);
+    @Inject
+    public MovieViewModelFactory mMovieViewModelFactory ;
 
     private MovieViewModel mMovieViewModel;
 
@@ -59,6 +63,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
         setContentView(R.layout.activity_popular_movies_list);
 
         ButterKnife.bind(this);
+
+        ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
         mMovieViewModel = ViewModelProviders.of(this, mMovieViewModelFactory)
                 .get(MovieViewModel.class);
@@ -173,9 +179,4 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
     }
 
-    @Override
-    protected void onDestroy() {
-        mMovieAdapter.dispose();
-        super.onDestroy();
-    }
 }
