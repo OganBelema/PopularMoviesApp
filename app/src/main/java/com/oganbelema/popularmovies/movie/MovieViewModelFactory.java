@@ -7,10 +7,15 @@ import androidx.lifecycle.ViewModelProvider;
 import com.oganbelema.popularmovies.movie.MovieRepository;
 import com.oganbelema.popularmovies.movie.MovieViewModel;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class MovieViewModelFactory implements ViewModelProvider.Factory {
 
     private final MovieRepository mMovieRepository;
 
+    @Inject
     public MovieViewModelFactory(MovieRepository movieRepository) {
         mMovieRepository = movieRepository;
     }

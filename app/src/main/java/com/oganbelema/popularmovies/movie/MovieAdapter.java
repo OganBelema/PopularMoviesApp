@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.network.ServiceGenerator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,18 +25,20 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private ArrayList<Movie> mMovies = new ArrayList<>(0);
+    private List<Movie> mMovies = new ArrayList<>(0);
 
     private Disposable mDisposable;
 
-    public interface Listener {
+    private Boolean diifUtilIsOperating = false;
+
+    public interface MovieItemOnClickListener {
         void onMovieItemClicked(Movie movie);
     }
 
-    private final Listener mListener;
+    private final MovieItemOnClickListener mMovieItemOnClickListener;
 
-    public MovieAdapter(Listener listener) {
-        mListener = listener;
+    public MovieAdapter(MovieItemOnClickListener movieItemOnClickListener) {
+        mMovieItemOnClickListener = movieItemOnClickListener;
     }
 
     @NonNull
@@ -63,20 +65,32 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     public void setMovies(@NonNull final List<Movie> movies){
 
+        if (diifUtilIsOperating) return;
+
+        diifUtilIsOperating = true;
+
         mDisposable = Observable.fromCallable(() -> DiffUtil
-                .calculateDiff(new MoviesDiffCallback(mMovies, movies), false)).subscribeOn(Schedulers.io())
+                .calculateDiff(new MoviesDiffCallback(mMovies, movies), false))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(diffResult -> {
-                    mMovies = (ArrayList<Movie>) movies;
                     diffResult.dispatchUpdatesTo(MovieAdapter.this);
+                    mMovies =  movies;
+                    diifUtilIsOperating = false;
                 });
 
     }
 
-    public void dispose() {
+    private void dispose() {
         if (mDisposable != null){
             mDisposable.dispose();
         }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        dispose();
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -89,11 +103,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(v ->
-                    mListener.onMovieItemClicked(mMovies.get(getAdapterPosition())));
+                    mMovieItemOnClickListener.onMovieItemClicked(mMovies.get(getAdapterPosition())));
         }
 
         void bindData(final Movie movie){
-            Picasso.get().load(ServiceGenerator.IMAGE_URL + movie.getPosterPath())
+            Picasso.get().load(Constants.IMAGE_URL + movie.getPosterPath())
                     .error(R.drawable.ic_error_24dp)
                     .into(mMoviePosterImageView);
         }

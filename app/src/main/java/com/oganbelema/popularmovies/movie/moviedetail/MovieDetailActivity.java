@@ -10,10 +10,14 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.oganbelema.popularmovies.Constants;
+import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.R;
 import com.oganbelema.popularmovies.movie.Movie;
-import com.oganbelema.popularmovies.network.ServiceGenerator;
 import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +25,9 @@ import butterknife.ButterKnife;
 public class MovieDetailActivity extends AppCompatActivity {
 
     public static final String MOVIE = "movie";
+
+    @Inject @Named(Constants.NAMED_IMAGE_URL)
+    public String imageUrl;
 
     @BindView(R.id.moviePosterImageView)
     ImageView mMoviePosterImageView;
@@ -41,7 +48,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
         ButterKnife.bind(this);
+
+        ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
         Intent movieIntent = getIntent();
 
@@ -56,8 +66,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (movie != null){
             setTitle(movie.getTitle());
 
-            Picasso.get().load(ServiceGenerator.IMAGE_URL  + movie.getPosterPath())
+            Picasso.get().load(imageUrl  + movie.getPosterPath())
                     .into(mMoviePosterImageView);
+
             mMovieTitleTextView.setText(movie.getTitle());
             mMovieReleaseDateTextView.setText(getString(R.string.release_date, movie.getReleaseDate()));
             mVoteAverageTextView.setText(getString(R.string.vote_average, movie.getVoteAverage()));
@@ -68,7 +79,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
-            NavUtils.navigateUpFromSameTask(this);
+            onBackPressed();
             return true;
         }
 
