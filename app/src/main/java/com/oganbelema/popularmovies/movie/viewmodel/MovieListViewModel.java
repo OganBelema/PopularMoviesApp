@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.FilterOptions;
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.ui.MovieAdapter;
 

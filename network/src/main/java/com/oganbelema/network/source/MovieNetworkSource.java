@@ -1,11 +1,12 @@
-package com.oganbelema.popularmovies.remote;
+package com.oganbelema.network.source;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.oganbelema.popularmovies.network.MoviesApi;
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
-import com.oganbelema.popularmovies.remote.model.movie.MovieResponse;
+
+import com.oganbelema.network.MoviesApi;
+import com.oganbelema.network.model.movie.Movie;
+import com.oganbelema.network.model.movie.MovieResponse;
 
 import java.util.List;
 

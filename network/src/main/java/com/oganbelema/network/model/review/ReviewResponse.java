@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.remote.model.review;
+package com.oganbelema.network.model.review;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

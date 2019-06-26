@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.remote.model.review;
+package com.oganbelema.network.model.review;
 
 public class Review {
     private String author;

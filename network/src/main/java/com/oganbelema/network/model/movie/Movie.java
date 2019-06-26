@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.remote.model.movie;
+package com.oganbelema.network.model.movie;
 
 import android.os.Parcel;
 import android.os.Parcelable;

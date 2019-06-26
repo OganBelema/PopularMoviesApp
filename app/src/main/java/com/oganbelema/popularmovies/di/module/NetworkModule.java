@@ -2,11 +2,11 @@ package com.oganbelema.popularmovies.di.module;
 
 import android.content.Context;
 
+import com.oganbelema.network.AuthInterceptor;
+import com.oganbelema.network.CacheInterceptor;
+import com.oganbelema.network.MoviesApi;
 import com.oganbelema.popularmovies.BuildConfig;
 import com.oganbelema.popularmovies.Constants;
-import com.oganbelema.popularmovies.network.AuthInterceptor;
-import com.oganbelema.popularmovies.network.CacheInterceptor;
-import com.oganbelema.popularmovies.network.MoviesApi;
 
 import java.io.File;
 

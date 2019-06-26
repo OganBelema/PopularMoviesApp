@@ -16,11 +16,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.movie.FilterOptions;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModelFactory;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModel;
 

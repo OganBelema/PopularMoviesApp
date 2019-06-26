@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.network;
+package com.oganbelema.network;
 
 import androidx.annotation.NonNull;
 

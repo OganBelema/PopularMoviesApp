@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.remote.model.trailer;
+package com.oganbelema.network.model.trailer;
 
 import java.util.List;
 

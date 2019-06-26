@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.remote.model.trailer;
+package com.oganbelema.network.model.trailer;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

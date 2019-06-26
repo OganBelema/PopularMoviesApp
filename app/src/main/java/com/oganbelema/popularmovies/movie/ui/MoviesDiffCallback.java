@@ -4,7 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
+
+import com.oganbelema.network.model.movie.Movie;
 
 import java.util.List;
 

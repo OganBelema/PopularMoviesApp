@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.oganbelema.database.PopularMoviesDB;
 import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
-import com.oganbelema.popularmovies.remote.MovieNetworkSource;
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
-import com.oganbelema.popularmovies.network.NetworkUtil;
+import com.oganbelema.network.NetworkUtil;
+import com.oganbelema.network.model.movie.Movie;
+import com.oganbelema.network.source.MovieNetworkSource;
 
 import java.util.List;
 

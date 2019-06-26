@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

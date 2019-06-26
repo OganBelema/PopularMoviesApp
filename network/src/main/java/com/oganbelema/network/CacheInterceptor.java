@@ -1,6 +1,5 @@
-package com.oganbelema.popularmovies.network;
+package com.oganbelema.network;
 
-import com.oganbelema.popularmovies.Constants;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +9,8 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 
 public class CacheInterceptor implements Interceptor {
+
+    private static final String CACHE_CONTROL = "Cache-Control";
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -21,7 +22,7 @@ public class CacheInterceptor implements Interceptor {
                 .build();
 
         return response.newBuilder()
-                .addHeader(Constants.CACHE_CONTROL, cacheControl.toString())
+                .addHeader(CACHE_CONTROL, cacheControl.toString())
                 .build();
 
 

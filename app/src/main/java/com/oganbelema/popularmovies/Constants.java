@@ -9,6 +9,4 @@ public class Constants {
     public static final String BASE_URL = "http://api.themoviedb.org/3/";
 
     public static final String IMAGE_URL = "http://image.tmdb.org/t/p/original/";
-
-    public static final String CACHE_CONTROL = "Cache-Control";
 }
