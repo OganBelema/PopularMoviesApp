@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.oganbelema.database.PopularMoviesDB;
 import com.oganbelema.database.entity.FavoriteMovieEntity;
-import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
+import com.oganbelema.database.mapper.EntityMapper;
 import com.oganbelema.network.NetworkUtil;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.network.source.MovieNetworkSource;
@@ -29,7 +29,7 @@ public class MovieRepository {
 
     private final PopularMoviesDB mPopularMoviesDB;
 
-    private final FavoriteMovieEntityMapper<FavoriteMovieEntity, Movie> mFavoriteMovieEntityMapper;
+    private final EntityMapper<FavoriteMovieEntity, Movie> mEntityMapper;
 
     private LiveData<List<Movie>> mMovies = new MutableLiveData<>();
 
@@ -42,12 +42,12 @@ public class MovieRepository {
     @Inject
     public MovieRepository(NetworkUtil networkUtil, MovieNetworkSource movieNetworkSource,
                            PopularMoviesDB popularMoviesDB,
-                           FavoriteMovieEntityMapper<FavoriteMovieEntity, Movie>
-                                   favoriteMovieEntityMapper) {
+                           EntityMapper<FavoriteMovieEntity, Movie>
+                                   entityMapper) {
         this.mNetworkUtil = networkUtil;
         this.mMovieNetworkSource = movieNetworkSource;
         this.mPopularMoviesDB = popularMoviesDB;
-        this.mFavoriteMovieEntityMapper = favoriteMovieEntityMapper;
+        this.mEntityMapper = entityMapper;
     }
 
     public LiveData<Boolean> getNetworkStatus() {
@@ -86,15 +86,15 @@ public class MovieRepository {
                 mPopularMoviesDB.getFavoriteMovieDao().getFavoriteMovies()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::mapToFavoriteMovieEntitiesToMovies)
+                        .subscribe(this::mapFavoriteMovieEntitiesToMovies)
         );
         return mFavoriteMovies;
     }
 
-    private void mapToFavoriteMovieEntitiesToMovies(List<FavoriteMovieEntity> favoriteMovieEntities) {
+    private void mapFavoriteMovieEntitiesToMovies(List<FavoriteMovieEntity> favoriteMovieEntities) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.fromFavoriteMovieEntities(favoriteMovieEntities))
+                        mEntityMapper.fromEntityList(favoriteMovieEntities))
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(mFavoriteMovies::postValue)
@@ -104,8 +104,8 @@ public class MovieRepository {
     public void addFavoriteMovie(Movie movie) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.toFavoriteMovieEntity(movie))
-                        .subscribeOn(Schedulers.computation())
+                        mEntityMapper.toEntity(movie))
+                        .subscribeOn(Schedulers.io())
                         .subscribe(favoriteMovieEntity ->
                                 mPopularMoviesDB.getFavoriteMovieDao().insert(favoriteMovieEntity))
         );
@@ -114,8 +114,8 @@ public class MovieRepository {
     public void removeFavoriteMovie(Movie movie) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.toFavoriteMovieEntity(movie))
-                        .subscribeOn(Schedulers.computation())
+                        mEntityMapper.toEntity(movie))
+                        .subscribeOn(Schedulers.io())
                         .subscribe(favoriteMovieEntity ->
                                 mPopularMoviesDB.getFavoriteMovieDao().delete(favoriteMovieEntity))
         );

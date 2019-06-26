@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie.ui;
+package com.oganbelema.popularmovies.movie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +17,8 @@ public class MoviesDiffCallback extends DiffUtil.Callback {
     @NonNull
     private final List<Movie> newMovieList;
 
-    public MoviesDiffCallback(@Nullable List<Movie> oldMovieList, @NonNull List<Movie> newMovieList) {
+    public MoviesDiffCallback(@Nullable List<Movie> oldMovieList,
+                              @NonNull List<Movie> newMovieList) {
         this.oldMovieList = oldMovieList;
         this.newMovieList = newMovieList;
     }

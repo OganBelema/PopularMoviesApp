@@ -7,18 +7,18 @@ import androidx.lifecycle.ViewModel;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.FilterOptions;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
-import com.oganbelema.popularmovies.movie.ui.MovieAdapter;
+import com.oganbelema.popularmovies.movie.MovieAdapter;
 
 import java.util.List;
 
 
-public class MovieListViewModel extends ViewModel {
+public class MovieViewModel extends ViewModel {
 
     private final MovieRepository mMovieRepository;
 
     private final MovieAdapter mMovieAdapter;
 
-    public MovieListViewModel(MovieRepository movieRepository, MovieAdapter movieAdapter) {
+    public MovieViewModel(MovieRepository movieRepository, MovieAdapter movieAdapter) {
         mMovieRepository = movieRepository;
         mMovieAdapter = movieAdapter;
         filterOptions.setValue(FilterOptions.POPULAR_MOVIES);

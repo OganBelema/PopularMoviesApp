@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie.ui;
+package com.oganbelema.popularmovies.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
@@ -19,10 +19,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.movie.FilterOptions;
-import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModelFactory;
+import com.oganbelema.popularmovies.movie.MovieAdapter;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModelFactory;
 import com.oganbelema.popularmovies.R;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
-import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModel;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModel;
 
 import java.util.List;
 
@@ -43,9 +44,9 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     public MovieRepository mMovieRepository;
 
     @Inject
-    public MovieListViewModelFactory mMovieListViewModelFactory;
+    public MovieViewModelFactory mMovieViewModelFactory;
 
-    private MovieListViewModel mMovieListViewModel;
+    private MovieViewModel mMovieViewModel;
 
     @BindView(R.id.loaderViews)
     Group mLoadingIndicatorViews;
@@ -75,10 +76,10 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
         ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
-        mMovieListViewModel = ViewModelProviders.of(this, mMovieListViewModelFactory)
-                .get(MovieListViewModel.class);
+        mMovieViewModel = ViewModelProviders.of(this, mMovieViewModelFactory)
+                .get(MovieViewModel.class);
 
-        mMovieAdapter = mMovieListViewModel.getMovieAdapter();
+        mMovieAdapter = mMovieViewModel.getMovieAdapter();
 
         mMovieAdapter.setMovieItemOnClickListener(this);
 
@@ -88,9 +89,9 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
         mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
-        mMovieListViewModel.getFilterOptions().observe(this, this::handleFilterOption);
+        mMovieViewModel.getFilterOptions().observe(this, this::handleFilterOption);
 
-        mMovieListViewModel.getError().observe(this, error -> {
+        mMovieViewModel.getError().observe(this, error -> {
             if (error != null){
                 showErrorView();
                 Log.e(TAG, error.getLocalizedMessage(), error);
@@ -98,7 +99,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
         });
 
         errorTextView.setOnClickListener(view -> {
-            FilterOptions option = mMovieListViewModel.getRawFilterOption();
+            FilterOptions option = mMovieViewModel.getRawFilterOption();
 
             if (option == null){
                 option = FilterOptions.POPULAR_MOVIES;
@@ -107,8 +108,9 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
             handleFilterOption(option);
         });
 
-        mMovieListViewModel.getNetworkStatus().observe(this, networkStatus -> {
+        mMovieViewModel.getNetworkStatus().observe(this, networkStatus -> {
             if (!networkStatus){
+                mMovieViewModel.setFilterOption(FilterOptions.FAVORITE_MOVIES);
                 filterToFavoriteMovies();
                 Snackbar.make(mMoviesRecyclerView, getString(R.string.offline_message),
                         Snackbar.LENGTH_LONG).show();
@@ -151,15 +153,15 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                if (mMovieListViewModel.getFilterOptions().getValue() == FilterOptions.POPULAR_MOVIES) {
-                    mMovieListViewModel.setFilterOption(FilterOptions.TOP_RATED_MOVIES);
+                if (mMovieViewModel.getFilterOptions().getValue() == FilterOptions.POPULAR_MOVIES) {
+                    mMovieViewModel.setFilterOption(FilterOptions.TOP_RATED_MOVIES);
                 } else {
-                    mMovieListViewModel.setFilterOption(FilterOptions.POPULAR_MOVIES);
+                    mMovieViewModel.setFilterOption(FilterOptions.POPULAR_MOVIES);
                 }
                 return true;
 
             case R.id.action_filter_favorite:
-                mMovieListViewModel.setFilterOption(FilterOptions.FAVORITE_MOVIES);
+                mMovieViewModel.setFilterOption(FilterOptions.FAVORITE_MOVIES);
                 return true;
 
         }
@@ -185,7 +187,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     private void getPopularMovies() {
         showLoaderView();
 
-        mMovieListViewModel.getPopularMovies().observe(this, popularMovies -> {
+        mMovieViewModel.getPopularMovies().observe(this, popularMovies -> {
                     if (popularMovies != null) {
                         displayMovies(popularMovies);
                     }
@@ -195,7 +197,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     private void getTopRatedMovies() {
         showLoaderView();
 
-        mMovieListViewModel.getTopRatedMovies().observe(this, topRatedMovies -> {
+        mMovieViewModel.getTopRatedMovies().observe(this, topRatedMovies -> {
             if (topRatedMovies != null) {
                 displayMovies(topRatedMovies);
             }
@@ -205,8 +207,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     private void getFavoriteMovies(){
         showLoaderView();
 
-        mMovieListViewModel.getFavoriteMovies().observe(this, movies -> {
-            if (mMovieListViewModel.getRawFilterOption().equals(FilterOptions.FAVORITE_MOVIES)){
+        mMovieViewModel.getFavoriteMovies().observe(this, movies -> {
+            if (mMovieViewModel.getRawFilterOption().equals(FilterOptions.FAVORITE_MOVIES)){
                 displayMovies(movies);
             }
         });

@@ -16,7 +16,7 @@
         tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".movie.ui.MovieListActivity"
+        <activity android:name=".ui.MovieListActivity"
             android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,9 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".movie.ui.MovieDetailActivity"
-            android:parentActivityName=".movie.ui.MovieListActivity"/>
+        <activity android:name=".ui.MovieDetailActivity"
+            android:parentActivityName=".ui.MovieListActivity"/>
         <service android:name=".service.FavoriteService" android:exported="false"/>
+        <service android:name=".service.TrailerService" android:exported="false"/>
+        <service android:name=".service.ReviewService" android:exported="false"/>
 
     </application>
 

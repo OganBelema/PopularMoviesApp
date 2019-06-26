@@ -17,10 +17,10 @@ public interface MoviesApi {
     @GET("movie/top_rated/")
     Single<Response<MovieResponse>> getTopRatedMovies();
 
-    @GET("movie/{movie_id}/reviews/")
+    @GET("movie/{movie_id}/reviews")
     Single<Response<ReviewResponse>> getMovieReviews(@Path("movie_id") int movieId);
 
-    @GET("movie/{movie_id}/videos/")
+    @GET("movie/{movie_id}/videos")
     Single<Response<TrailerResponse>> getMovieTrailers(@Path("movie_id") int movieId);
 
 }

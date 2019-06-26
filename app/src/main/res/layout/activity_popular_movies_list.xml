@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".movie.ui.MovieListActivity">
+    tools:context=".ui.MovieListActivity">
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/loaderViews"

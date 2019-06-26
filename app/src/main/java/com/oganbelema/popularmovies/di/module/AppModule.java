@@ -3,7 +3,9 @@ package com.oganbelema.popularmovies.di.module;
 import android.app.Application;
 import android.content.Context;
 
-import com.oganbelema.popularmovies.movie.ui.MovieAdapter;
+import com.oganbelema.popularmovies.movie.MovieAdapter;
+import com.oganbelema.popularmovies.reviews.MovieReviewAdapter;
+import com.oganbelema.popularmovies.trailer.MovieTrailerAdapter;
 
 import javax.inject.Singleton;
 
@@ -28,5 +30,15 @@ public class AppModule {
     @Provides
     public MovieAdapter provideMovieAdapter(){
         return new MovieAdapter();
+    }
+
+    @Provides
+    public MovieReviewAdapter provideMovieReviewAdapter(){
+        return new MovieReviewAdapter();
+    }
+
+    @Provides
+    public MovieTrailerAdapter provideMovieTrailerAdapter(){
+        return new MovieTrailerAdapter();
     }
 }

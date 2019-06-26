@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie.ui;
+package com.oganbelema.popularmovies.movie;
 
 import android.view.LayoutInflater;
 import android.view.View;

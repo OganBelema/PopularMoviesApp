@@ -1,17 +1,17 @@
 package com.oganbelema.popularmovies.mapper;
 
 import com.oganbelema.database.entity.FavoriteMovieEntity;
-import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
+import com.oganbelema.database.mapper.EntityMapper;
 import com.oganbelema.network.model.movie.Movie;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FavoriteMovieEntityMapperImpl implements
-        FavoriteMovieEntityMapper<FavoriteMovieEntity, Movie> {
+        EntityMapper<FavoriteMovieEntity, Movie> {
 
     @Override
-    public Movie fromFavouriteMovieEntity(FavoriteMovieEntity favoriteMovieEntity) {
+    public Movie fromEntity(FavoriteMovieEntity favoriteMovieEntity) {
         return new Movie(favoriteMovieEntity.getVoteCount(), favoriteMovieEntity.getId(),
                 favoriteMovieEntity.getVideo(), favoriteMovieEntity.getVoteAverage(),
                 favoriteMovieEntity.getTitle(), favoriteMovieEntity.getPopularity(),
@@ -22,7 +22,7 @@ public class FavoriteMovieEntityMapperImpl implements
     }
 
     @Override
-    public FavoriteMovieEntity toFavoriteMovieEntity(Movie movie) {
+    public FavoriteMovieEntity toEntity(Movie movie) {
         return new FavoriteMovieEntity(movie.getVoteCount(), movie.getId(), movie.getVideo(),
                 movie.getVoteAverage(), movie.getTitle(), movie.getPopularity(),
                 movie.getPosterPath(), movie.getOriginalLanguage(), movie.getOriginalTitle(),
@@ -30,14 +30,24 @@ public class FavoriteMovieEntityMapperImpl implements
                 movie.getReleaseDate());
     }
 
-    public List<Movie> fromFavoriteMovieEntities(List<FavoriteMovieEntity> favoriteMovieEntities){
+    public List<Movie> fromEntityList(List<FavoriteMovieEntity> favoriteMovieEntities){
         List<Movie> movies = new ArrayList<>();
 
         for (FavoriteMovieEntity favoriteMovieEntity: favoriteMovieEntities){
-            movies.add(fromFavouriteMovieEntity(favoriteMovieEntity));
+            movies.add(fromEntity(favoriteMovieEntity));
         }
 
         return movies;
     }
 
+    @Override
+    public List<FavoriteMovieEntity> toEntityList(List<Movie> movies) {
+        List<FavoriteMovieEntity> favoriteMovieEntities = new ArrayList<>();
+
+        for (Movie movie: movies){
+            favoriteMovieEntities.add(toEntity(movie));
+        }
+
+        return favoriteMovieEntities;
+    }
 }
