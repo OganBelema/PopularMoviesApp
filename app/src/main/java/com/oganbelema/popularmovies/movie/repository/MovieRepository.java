@@ -5,11 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.oganbelema.database.PopularMoviesDB;
 import com.oganbelema.database.entity.FavoriteMovieEntity;
-import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
-import com.oganbelema.popularmovies.movie.model.Movie;
-import com.oganbelema.popularmovies.movie.model.MovieResponse;
-import com.oganbelema.popularmovies.network.MoviesApi;
-import com.oganbelema.popularmovies.network.NetworkUtil;
+import com.oganbelema.database.mapper.EntityMapper;
+import com.oganbelema.network.NetworkUtil;
+import com.oganbelema.network.model.movie.Movie;
+import com.oganbelema.network.source.MovieNetworkSource;
 
 import java.util.List;
 
@@ -17,41 +16,38 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 @Singleton
 public class MovieRepository {
 
     private final NetworkUtil mNetworkUtil;
 
-    private final MoviesApi mMoviesApi;
+    private final MovieNetworkSource mMovieNetworkSource;
 
     private final PopularMoviesDB mPopularMoviesDB;
 
-    private final FavoriteMovieEntityMapper<FavoriteMovieEntity, Movie> mFavoriteMovieEntityMapper;
+    private final EntityMapper<FavoriteMovieEntity, Movie> mEntityMapper;
 
-    private MutableLiveData<List<Movie>> mMovies = new MutableLiveData<>();
+    private LiveData<List<Movie>> mMovies = new MutableLiveData<>();
 
-    private MutableLiveData<Throwable> mError = new MutableLiveData<>();
+    private final MutableLiveData<List<Movie>> mFavoriteMovies = new MutableLiveData<>();
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private MutableLiveData<Boolean> mNetworkStatus = new MutableLiveData<>();
 
     @Inject
-    public MovieRepository(NetworkUtil networkUtil, MoviesApi mMoviesApi,
+    public MovieRepository(NetworkUtil networkUtil, MovieNetworkSource movieNetworkSource,
                            PopularMoviesDB popularMoviesDB,
-                           FavoriteMovieEntityMapper<FavoriteMovieEntity, Movie>
-                                   favoriteMovieEntityMapper) {
+                           EntityMapper<FavoriteMovieEntity, Movie>
+                                   entityMapper) {
         this.mNetworkUtil = networkUtil;
-        this.mMoviesApi = mMoviesApi;
+        this.mMovieNetworkSource = movieNetworkSource;
         this.mPopularMoviesDB = popularMoviesDB;
-        this.mFavoriteMovieEntityMapper = favoriteMovieEntityMapper;
+        this.mEntityMapper = entityMapper;
     }
 
     public LiveData<Boolean> getNetworkStatus() {
@@ -62,11 +58,13 @@ public class MovieRepository {
         return mMovies;
     }
 
+
     public void getPopularMovies() {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
-            getPopularMoviesRemote();
+            mMovieNetworkSource.getPopularMoviesRemote();
+            mMovies = mMovieNetworkSource.getMovies();
         }
     }
 
@@ -78,90 +76,36 @@ public class MovieRepository {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
-            getTopRatedMoviesRemote();
+            mMovieNetworkSource.getTopRatedMoviesRemote();
+            mMovies = mMovieNetworkSource.getMovies();
         }
     }
 
-    public void getFavoriteMovies() {
+    public LiveData<List<Movie>> getFavoriteMovies() {
         disposables.add(
                 mPopularMoviesDB.getFavoriteMovieDao().getFavoriteMovies()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::mapToFavoriteMovieEntitiesToMovies)
+                        .subscribe(this::mapFavoriteMovieEntitiesToMovies)
         );
+        return mFavoriteMovies;
     }
 
-    private void mapToFavoriteMovieEntitiesToMovies(List<FavoriteMovieEntity> favoriteMovieEntities) {
+    private void mapFavoriteMovieEntitiesToMovies(List<FavoriteMovieEntity> favoriteMovieEntities) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.fromFavoriteMovieEntities(favoriteMovieEntities))
+                        mEntityMapper.fromEntityList(favoriteMovieEntities))
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(movies -> mMovies.postValue(movies))
+                        .subscribe(mFavoriteMovies::postValue)
         );
-    }
-
-    private void getPopularMoviesRemote() {
-        mMoviesApi.getPopularMovies()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<Response<MovieResponse>>() {
-                    @Override
-                    public void onSubscribe(Disposable disposable) {
-                        disposables.add(disposable);
-                    }
-
-                    @Override
-                    public void onSuccess(Response<MovieResponse> popularMovieResponse) {
-                        handleSuccessfulPopularMovieRequest(popularMovieResponse);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                         mError.postValue(error);
-                    }
-                });
-    }
-
-    private void handleSuccessfulPopularMovieRequest(Response<MovieResponse> movieResponse) {
-        if (movieResponse != null) {
-            if (movieResponse.isSuccessful()) {
-                MovieResponse popularMovies = movieResponse.body();
-
-                if (popularMovies != null) {
-                    mMovies.postValue(popularMovies.getMovies());
-                }
-            }
-        }
-    }
-
-    private void getTopRatedMoviesRemote() {
-        mMoviesApi.getTopRatedMovies()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<Response<MovieResponse>>() {
-                    @Override
-                    public void onSubscribe(Disposable disposable) {
-                        disposables.add(disposable);
-                    }
-
-                    @Override
-                    public void onSuccess(Response<MovieResponse> topRatedMovieResponse) {
-                        handleSuccessfulPopularMovieRequest(topRatedMovieResponse);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        mError.postValue(error);
-                    }
-                });
     }
 
     public void addFavoriteMovie(Movie movie) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.toFavoriteMovieEntity(movie))
-                        .subscribeOn(Schedulers.computation())
+                        mEntityMapper.toEntity(movie))
+                        .subscribeOn(Schedulers.io())
                         .subscribe(favoriteMovieEntity ->
                                 mPopularMoviesDB.getFavoriteMovieDao().insert(favoriteMovieEntity))
         );
@@ -170,22 +114,20 @@ public class MovieRepository {
     public void removeFavoriteMovie(Movie movie) {
         disposables.add(
                 Observable.fromCallable(() ->
-                        mFavoriteMovieEntityMapper.toFavoriteMovieEntity(movie))
-                        .subscribeOn(Schedulers.computation())
+                        mEntityMapper.toEntity(movie))
+                        .subscribeOn(Schedulers.io())
                         .subscribe(favoriteMovieEntity ->
                                 mPopularMoviesDB.getFavoriteMovieDao().delete(favoriteMovieEntity))
         );
     }
 
     public MutableLiveData<Throwable> getError() {
-        return mError;
+        return mMovieNetworkSource.getError();
     }
 
     public void dispose() {
-        if (disposables != null) {
+            mMovieNetworkSource.dispose();
             disposables.dispose();
-        }
     }
-
 
 }

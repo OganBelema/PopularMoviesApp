@@ -13,4 +13,11 @@
     <string name="favorite_movies">Favorite Movies</string>
     <string name="no_movies">NO MOVIES</string>
     <string name="offline_message">Showing favorite movies cause you are offline</string>
+    <string name="offline_movie_review">Showing offline reviews</string>
+    <string name="offline_movie_trailers">Showing offline trailers</string>
+    <string name="fetching_trailer_error">Error occurred fetching trailers</string>
+    <string name="fetching_reviews_error">An error occurred fetching reviews</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
+    <string name="play_icon">Play icon</string>
 </resources>

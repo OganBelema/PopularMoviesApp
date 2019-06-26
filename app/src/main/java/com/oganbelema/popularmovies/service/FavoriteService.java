@@ -6,8 +6,8 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.PopularMoviesApp;
-import com.oganbelema.popularmovies.movie.model.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 
 import javax.inject.Inject;

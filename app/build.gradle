@@ -76,7 +76,7 @@ dependencies {
 
     //database module
     implementation project(path: ':database')
-
+    implementation project(path: ':network')
 
 
 }
