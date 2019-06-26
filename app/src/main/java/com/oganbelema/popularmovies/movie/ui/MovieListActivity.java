@@ -2,7 +2,6 @@ package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +20,7 @@ import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.movie.FilterOptions;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModelFactory;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModel;
 

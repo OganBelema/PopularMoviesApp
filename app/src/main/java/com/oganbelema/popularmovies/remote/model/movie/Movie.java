@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie.model;
+package com.oganbelema.popularmovies.remote.model.movie;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Movie implements Parcelable {

@@ -2,7 +2,7 @@ package com.oganbelema.popularmovies.mapper;
 
 import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
-import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.remote.model.movie.Movie;
 
 import java.util.ArrayList;
 import java.util.List;

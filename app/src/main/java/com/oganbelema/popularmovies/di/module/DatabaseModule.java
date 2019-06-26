@@ -8,7 +8,7 @@ import com.oganbelema.database.PopularMoviesDB;
 import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.FavoriteMovieEntityMapper;
 import com.oganbelema.popularmovies.mapper.FavoriteMovieEntityMapperImpl;
-import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.remote.model.movie.Movie;
 
 import javax.inject.Singleton;
 

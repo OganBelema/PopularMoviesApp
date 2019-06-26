@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.oganbelema.popularmovies.movie.FilterOptions;
-import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.ui.MovieAdapter;
 
@@ -41,8 +41,7 @@ public class MovieListViewModel extends ViewModel {
     }
 
     public LiveData<List<Movie>> getFavoriteMovies(){
-        mMovieRepository.getFavoriteMovies();
-        return mMovieRepository.getMovies();
+        return mMovieRepository.getFavoriteMovies();
     }
 
     public LiveData<Throwable> getError(){

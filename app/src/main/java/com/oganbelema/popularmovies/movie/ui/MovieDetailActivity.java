@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.remote.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieDetailViewModel;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieDetailViewModelFactory;
 import com.oganbelema.popularmovies.service.FavoriteService;
