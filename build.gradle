@@ -30,4 +30,6 @@ task clean(type: Delete) {
 ext {
     daggerVersion = '2.13'
     loggingInterceptorVersion = '3.9.0'
+    room_version = "2.1.0"
+    lifecycle_version = "2.0.0"
 }

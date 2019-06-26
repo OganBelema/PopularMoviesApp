@@ -2,26 +2,28 @@ package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.oganbelema.popularmovies.PopularMoviesApp;
-import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModelFactory;
+import com.oganbelema.popularmovies.movie.FilterOptions;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModelFactory;
 import com.oganbelema.popularmovies.R;
 import com.oganbelema.popularmovies.movie.model.Movie;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
-import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModel;
-import com.oganbelema.popularmovies.movie.model.MovieResponse;
-import com.oganbelema.popularmovies.network.NetworkCallResult;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieListViewModel;
 
 import java.util.List;
 
@@ -29,31 +31,41 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Response;
 
 public class MovieListActivity extends AppCompatActivity implements MovieAdapter.MovieItemOnClickListener {
 
     private final String TAG = MovieListActivity.class.getSimpleName();
 
-    private static final int GRID_SPAN = 2;
+    private static final int GRID_SPAN_PORTRAIT = 2;
+
+    private static final int GRID_SPAN_HORIZONTAL = 3;
 
     @Inject
     public MovieRepository mMovieRepository;
 
     @Inject
-    public MovieViewModelFactory mMovieViewModelFactory ;
+    public MovieListViewModelFactory mMovieListViewModelFactory;
 
-    private MovieViewModel mMovieViewModel;
+    private MovieListViewModel mMovieListViewModel;
 
     @BindView(R.id.loaderViews)
     Group mLoadingIndicatorViews;
 
+    @BindView(R.id.errorViews)
+    Group mErrorViews;
+
     @BindView(R.id.moviesRecyclerView)
     RecyclerView mMoviesRecyclerView;
 
+    @BindView(R.id.errorTextView)
+    TextView errorTextView;
+
+    @BindView(R.id.noMoviesTextView)
+    TextView mNoMoviesTextView;
+
     private MovieAdapter mMovieAdapter;
 
-    private boolean mPopularMovies = true;
+    private GridLayoutManager mGridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,108 +76,179 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
         ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
-        mMovieViewModel = ViewModelProviders.of(this, mMovieViewModelFactory)
-                .get(MovieViewModel.class);
+        mMovieListViewModel = ViewModelProviders.of(this, mMovieListViewModelFactory)
+                .get(MovieListViewModel.class);
 
-        mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter = mMovieListViewModel.getMovieAdapter();
 
-        mMoviesRecyclerView.setLayoutManager(new GridLayoutManager(this, GRID_SPAN));
+        mMovieAdapter.setMovieItemOnClickListener(this);
+
+        mGridLayoutManager = new GridLayoutManager(this, GRID_SPAN_PORTRAIT);
+
+        mMoviesRecyclerView.setLayoutManager(mGridLayoutManager);
 
         mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
-        filterToPopularMovies();
+        mMovieListViewModel.getFilterOptions().observe(this, this::handleFilterOption);
 
+        mMovieListViewModel.getError().observe(this, error -> {
+            if (error != null){
+                showErrorView();
+                Log.e(TAG, error.getLocalizedMessage(), error);
+            }
+        });
+
+        errorTextView.setOnClickListener(view -> {
+            FilterOptions option = mMovieListViewModel.getRawFilterOption();
+
+            if (option == null){
+                option = FilterOptions.POPULAR_MOVIES;
+            }
+
+            handleFilterOption(option);
+        });
+
+        mMovieListViewModel.getNetworkStatus().observe(this, networkStatus -> {
+            if (!networkStatus){
+                filterToFavoriteMovies();
+                Snackbar.make(mMoviesRecyclerView, getString(R.string.offline_message),
+                        Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private void handleFilterOption(FilterOptions filterOptions) {
+        switch (filterOptions) {
+            case POPULAR_MOVIES:
+                filterToPopularMovies();
+                break;
+            case TOP_RATED_MOVIES:
+                filterToTopRatedMovies();
+                break;
+            case FAVORITE_MOVIES:
+                filterToFavoriteMovies();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mGridLayoutManager.setSpanCount(GRID_SPAN_HORIZONTAL);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mGridLayoutManager.setSpanCount(GRID_SPAN_PORTRAIT);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.movie_list, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_filter){
-            if (mPopularMovies){
-                filterToTopRatedMovies();
-            } else {
-                filterToPopularMovies();
-            }
+        switch (item.getItemId()) {
+            case R.id.action_filter:
+                if (mMovieListViewModel.getFilterOptions().getValue() == FilterOptions.POPULAR_MOVIES) {
+                    mMovieListViewModel.setFilterOption(FilterOptions.TOP_RATED_MOVIES);
+                } else {
+                    mMovieListViewModel.setFilterOption(FilterOptions.POPULAR_MOVIES);
+                }
+                return true;
+
+            case R.id.action_filter_favorite:
+                mMovieListViewModel.setFilterOption(FilterOptions.FAVORITE_MOVIES);
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void filterToTopRatedMovies() {
-        mPopularMovies = false;
         setTitle(R.string.top_rated_movies);
         getTopRatedMovies();
     }
 
     private void filterToPopularMovies() {
-        mPopularMovies = true;
         setTitle(R.string.popular_movies);
         getPopularMovies();
     }
 
-    private void getPopularMovies(){
+    private void filterToFavoriteMovies() {
+        setTitle(R.string.favorite_movies);
+        getFavoriteMovies();
+    }
+
+    private void getPopularMovies() {
         showLoaderView();
 
-        mMovieViewModel.getPopularMovies().observe(this,
-                popularMovieResponseNetworkCallResult -> {
-                    if (popularMovieResponseNetworkCallResult != null){
-
-                        processMovieNetworkCallResult(popularMovieResponseNetworkCallResult);
+        mMovieListViewModel.getPopularMovies().observe(this, popularMovies -> {
+                    if (popularMovies != null) {
+                        displayMovies(popularMovies);
                     }
                 });
     }
 
-    private void getTopRatedMovies(){
+    private void getTopRatedMovies() {
         showLoaderView();
 
-        mMovieViewModel.getTopRatedMovies().observe(this, movieResponseNetworkCallResult -> {
-            if (movieResponseNetworkCallResult != null){
-                processMovieNetworkCallResult(movieResponseNetworkCallResult);
+        mMovieListViewModel.getTopRatedMovies().observe(this, topRatedMovies -> {
+            if (topRatedMovies != null) {
+                displayMovies(topRatedMovies);
             }
         });
     }
 
-    private void processMovieNetworkCallResult(NetworkCallResult<MovieResponse> popularMovieResponseNetworkCallResult) {
-        showMoviesView();
+    private void getFavoriteMovies(){
+        showLoaderView();
 
-        Response<MovieResponse> response =
-                popularMovieResponseNetworkCallResult.getResponse();
-
-        Throwable error = popularMovieResponseNetworkCallResult.getError();
-
-        if (response != null){
-            if (response.isSuccessful()){
-                MovieResponse movieResponse = response.body();
-
-                if (movieResponse != null){
-                    List<Movie> popularMovies = movieResponse.getMovies();
-
-                    mMovieAdapter.setMovies(popularMovies);
-                }
+        mMovieListViewModel.getFavoriteMovies().observe(this, movies -> {
+            if (mMovieListViewModel.getRawFilterOption().equals(FilterOptions.FAVORITE_MOVIES)){
+                displayMovies(movies);
             }
+        });
+    }
 
-        }
-
-        if (error != null){
-            Snackbar.make(mMoviesRecyclerView, getString(R.string.network_error_message),
-                    Snackbar.LENGTH_LONG).show();
-            Log.e(TAG, "Error fetching data", error);
+    private void displayMovies(List<Movie> movies) {
+        if (movies != null && !movies.isEmpty()){
+            showMoviesView();
+            mMovieAdapter.setMovies(movies);
+        } else {
+            showNoMoviesView();
         }
     }
 
     private void showLoaderView() {
         mMoviesRecyclerView.setVisibility(View.GONE);
+        mErrorViews.setVisibility(View.GONE);
+        mNoMoviesTextView.setVisibility(View.GONE);
         mLoadingIndicatorViews.setVisibility(View.VISIBLE);
     }
 
     private void showMoviesView() {
+        mErrorViews.setVisibility(View.GONE);
         mLoadingIndicatorViews.setVisibility(View.GONE);
+        mNoMoviesTextView.setVisibility(View.GONE);
         mMoviesRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorView(){
+        mMoviesRecyclerView.setVisibility(View.GONE);
+        mLoadingIndicatorViews.setVisibility(View.GONE);
+        mNoMoviesTextView.setVisibility(View.GONE);
+        mErrorViews.setVisibility(View.VISIBLE);
+
+    }
+
+    private void showNoMoviesView(){
+        mMoviesRecyclerView.setVisibility(View.GONE);
+        mLoadingIndicatorViews.setVisibility(View.GONE);
+        mErrorViews.setVisibility(View.GONE);
+        mNoMoviesTextView.setVisibility(View.VISIBLE);
     }
 
     @Override

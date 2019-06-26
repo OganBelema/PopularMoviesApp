@@ -36,9 +36,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         void onMovieItemClicked(Movie movie);
     }
 
-    private final MovieItemOnClickListener mMovieItemOnClickListener;
+    private MovieItemOnClickListener mMovieItemOnClickListener;
 
-    public MovieAdapter(MovieItemOnClickListener movieItemOnClickListener) {
+    public void setMovieItemOnClickListener(MovieItemOnClickListener movieItemOnClickListener) {
         mMovieItemOnClickListener = movieItemOnClickListener;
     }
 
