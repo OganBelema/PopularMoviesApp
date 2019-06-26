@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie;
+package com.oganbelema.popularmovies.movie.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -40,9 +40,6 @@ public class Movie implements Parcelable {
     @SerializedName("original_title")
     @Expose
     private String originalTitle;
-    @SerializedName("genre_ids")
-    @Expose
-    private List<Integer> genreIds = null;
     @SerializedName("backdrop_path")
     @Expose
     private String backdropPath;
@@ -55,6 +52,25 @@ public class Movie implements Parcelable {
     @SerializedName("release_date")
     @Expose
     private String releaseDate;
+
+    public Movie(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title,
+                 Double popularity, String posterPath, String originalLanguage, String originalTitle,
+                 String backdropPath, Boolean adult, String overview,
+                 String releaseDate) {
+        this.voteCount = voteCount;
+        this.id = id;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.backdropPath = backdropPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
 
     protected Movie(Parcel in) {
         if (in.readByte() == 0) {
@@ -174,14 +190,6 @@ public class Movie implements Parcelable {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
-    }
-
     public String getBackdropPath() {
         return backdropPath;
     }
@@ -217,7 +225,7 @@ public class Movie implements Parcelable {
     @Override
     public int hashCode() {
         return Objects.hash(voteCount, id, video, voteAverage, title, popularity, posterPath,
-                originalLanguage, originalTitle, genreIds, backdropPath, adult, overview, releaseDate);
+                originalLanguage, originalTitle, backdropPath, adult, overview, releaseDate);
     }
 
     @Override
@@ -227,8 +235,8 @@ public class Movie implements Parcelable {
                 video == ((Movie) obj).video && voteAverage == ((Movie) obj).voteAverage &&
                 title == ((Movie) obj).title && popularity == ((Movie) obj).popularity &&
                 posterPath == ((Movie) obj).posterPath && originalLanguage == ((Movie) obj).originalLanguage
-                && originalTitle == ((Movie) obj).originalTitle && genreIds == ((Movie) obj).genreIds
-                && backdropPath == ((Movie) obj).backdropPath && adult == ((Movie) obj).adult &&
+                && originalTitle == ((Movie) obj).originalTitle && backdropPath ==
+                ((Movie) obj).backdropPath && adult == ((Movie) obj).adult &&
                 overview == ((Movie) obj).overview && releaseDate == ((Movie) obj).releaseDate;
     }
 

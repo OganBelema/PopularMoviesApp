@@ -1,11 +1,12 @@
-package com.oganbelema.popularmovies.movie.moviedetail;
+package com.oganbelema.popularmovies.movie.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.Movie;
+import com.oganbelema.popularmovies.movie.model.Movie;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieDetailViewModel;
+import com.oganbelema.popularmovies.movie.viewmodel.MovieDetailViewModelFactory;
+import com.oganbelema.popularmovies.service.FavoriteService;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -44,6 +48,12 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindView(R.id.movieOverviewTextView)
     TextView mMovieOverviewTextView;
 
+    @Inject
+    public MovieDetailViewModelFactory mMovieDetailViewModelFactory;
+
+    private MovieDetailViewModel mMovieDetailViewModel;
+    private Movie mMovie;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +66,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         Intent movieIntent = getIntent();
 
         if (movieIntent != null){
-            Movie movie = movieIntent.getParcelableExtra(MOVIE);
+            mMovie = movieIntent.getParcelableExtra(MOVIE);
 
-            displayDataOnView(movie);
+            displayDataOnView(mMovie);
         }
+
+        mMovieDetailViewModel = ViewModelProviders.of(this, mMovieDetailViewModelFactory)
+                .get(MovieDetailViewModel.class);
     }
 
     private void displayDataOnView(@Nullable Movie movie) {
@@ -77,12 +90,46 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.movie_detail, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
-            onBackPressed();
-            return true;
+
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            case R.id.action_favorite:
+                if (mMovie != null){
+                    favoriteMovie(mMovie);
+                }
+                return true;
+
+            case R.id.action_un_favorite:
+                if (mMovie != null){
+                    unFavoriteMovie(mMovie);
+                }
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void favoriteMovie(Movie movie){
+        Intent favoriteMovieIntent = new Intent(this, FavoriteService.class);
+        favoriteMovieIntent.putExtra(FavoriteService.MOVIE_KEY, movie);
+        favoriteMovieIntent.setAction(FavoriteService.FAVORITE_ACTION);
+        startService(favoriteMovieIntent);
+    }
+
+    private void unFavoriteMovie(Movie movie){
+        Intent favoriteMovieIntent = new Intent(this, FavoriteService.class);
+        favoriteMovieIntent.putExtra(FavoriteService.MOVIE_KEY, movie);
+        favoriteMovieIntent.setAction(FavoriteService.UN_FAVORITE_ACTION);
+        startService(favoriteMovieIntent);
     }
 }

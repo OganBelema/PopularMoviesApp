@@ -7,4 +7,11 @@
         android:icon="@drawable/ic_filter_list_24dp"
         android:title="@string/filter"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_filter_favorite"
+        android:icon="@drawable/ic_favorite_red"
+        android:title="@string/favorite"
+        app:showAsAction="ifRoom"/>
+
 </menu>

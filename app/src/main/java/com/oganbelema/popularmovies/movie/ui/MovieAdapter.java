@@ -1,4 +1,4 @@
-package com.oganbelema.popularmovies.movie;
+package com.oganbelema.popularmovies.movie.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.R;
+import com.oganbelema.popularmovies.movie.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,9 +36,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         void onMovieItemClicked(Movie movie);
     }
 
-    private final MovieItemOnClickListener mMovieItemOnClickListener;
+    private MovieItemOnClickListener mMovieItemOnClickListener;
 
-    public MovieAdapter(MovieItemOnClickListener movieItemOnClickListener) {
+    public void setMovieItemOnClickListener(MovieItemOnClickListener movieItemOnClickListener) {
         mMovieItemOnClickListener = movieItemOnClickListener;
     }
 

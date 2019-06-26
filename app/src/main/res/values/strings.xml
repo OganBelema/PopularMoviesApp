@@ -5,7 +5,12 @@
     <string name="loading_movies">Loading movies</string>
     <string name="movie_poster">Movie poster image</string>
     <string name="filter">Filter</string>
-    <string name="network_error_message">Error fetching data. Please try again</string>
+    <string name="network_error_message">Error fetching data. <u>RETRY</u></string>
     <string name="release_date">RELEASE DATE: %s</string>
     <string name="vote_average">VOTE AVERAGE: %.1f</string>
+    <string name="favorite">Favorite</string>
+    <string name="un_favorite">UnFavorite</string>
+    <string name="favorite_movies">Favorite Movies</string>
+    <string name="no_movies">NO MOVIES</string>
+    <string name="offline_message">Showing favorite movies cause you are offline</string>
 </resources>
