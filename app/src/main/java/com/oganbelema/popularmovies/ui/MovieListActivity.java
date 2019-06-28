@@ -41,9 +41,6 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     private static final int GRID_SPAN_HORIZONTAL = 3;
 
     @Inject
-    public MovieRepository mMovieRepository;
-
-    @Inject
     public MovieViewModelFactory mMovieViewModelFactory;
 
     private MovieViewModel mMovieViewModel;
