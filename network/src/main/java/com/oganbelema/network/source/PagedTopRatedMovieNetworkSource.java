@@ -10,8 +10,6 @@ import com.oganbelema.network.MoviesApi;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.network.model.movie.MovieResponse;
 
-import java.util.List;
-
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -25,9 +23,9 @@ public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, M
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final MutableLiveData<List<Movie>> mMovies = new MutableLiveData<>();
-
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
 
 
     public PagedTopRatedMovieNetworkSource(MoviesApi mMoviesApi) {
@@ -57,27 +55,29 @@ public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, M
                     @Override
                     public void onSubscribe(Disposable disposable) {
                         disposables.add(disposable);
+                        mLoading.postValue(true);
                     }
 
                     @Override
                     public void onSuccess(Response<MovieResponse> topRatedMovieResponse) {
+                        mLoading.postValue(false);
                         handleSuccessfulMovieRequest(initialCallback, callback, previousPage, nextPage, topRatedMovieResponse);
                     }
 
                     @Override
                     public void onError(Throwable error) {
+                        mLoading.postValue(false);
                         mError.postValue(error);
                     }
                 });
     }
 
-    private void handleSuccessfulMovieRequest(LoadInitialCallback<Long, Movie> initialCallback, LoadCallback<Long, Movie> callback, Long previousPage, Long nextPage, Response<MovieResponse> movieResponse) {
+    private void handleSuccessfulMovieRequest(LoadInitialCallback<Long, Movie> initialCallback, LoadCallback<Long, Movie> callback, Long previousPage, Long nextPage, final Response<MovieResponse> movieResponse) {
         if (movieResponse != null) {
             if (movieResponse.isSuccessful()) {
-                MovieResponse responseBody = movieResponse.body();
+                final MovieResponse responseBody = movieResponse.body();
 
                 if (responseBody != null) {
-                    mMovies.postValue(responseBody.getMovies());
                     if (initialCallback != null){
                         initialCallback.onResult(responseBody.getMovies(),previousPage, nextPage);
                     } else {
@@ -89,12 +89,12 @@ public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, M
         }
     }
 
-    public MutableLiveData<Throwable> getError() {
+    public LiveData<Throwable> getError() {
         return mError;
     }
 
-    public LiveData<List<Movie>> getMovies() {
-        return mMovies;
+    public LiveData<Boolean> getLoading() {
+        return mLoading;
     }
 
     public void dispose(){

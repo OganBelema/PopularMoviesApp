@@ -8,7 +8,8 @@ import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.EntityMapper;
 import com.oganbelema.network.NetworkUtil;
 import com.oganbelema.network.model.movie.Movie;
-import com.oganbelema.network.source.PagedTopRatedMovieNetworkSource;
+import com.oganbelema.network.source.factory.PopularMovieDataSourceFactory;
+import com.oganbelema.network.source.factory.TopRatedMovieDataSourceFactory;
 
 import java.util.List;
 
@@ -25,7 +26,9 @@ public class MovieRepository {
 
     private final NetworkUtil mNetworkUtil;
 
-    private final PagedTopRatedMovieNetworkSource mPagedTopRatedMovieNetworkSource;
+    private final PopularMovieDataSourceFactory mPopularMovieDataSourceFactory;
+
+    private final TopRatedMovieDataSourceFactory mTopRatedMovieDataSourceFactory;
 
     private final PopularMoviesDB mPopularMoviesDB;
 
@@ -40,14 +43,17 @@ public class MovieRepository {
     private MutableLiveData<Boolean> mNetworkStatus = new MutableLiveData<>();
 
     @Inject
-    public MovieRepository(NetworkUtil networkUtil, PagedTopRatedMovieNetworkSource pagedTopRatedMovieNetworkSource,
+    public MovieRepository(NetworkUtil networkUtil,
+                           PopularMovieDataSourceFactory popularMovieDataSourceFactory,
+                           TopRatedMovieDataSourceFactory topRatedMovieDataSourceFactory,
                            PopularMoviesDB popularMoviesDB,
                            EntityMapper<FavoriteMovieEntity, Movie>
                                    entityMapper) {
-        this.mNetworkUtil = networkUtil;
-        this.mPagedTopRatedMovieNetworkSource = pagedTopRatedMovieNetworkSource;
-        this.mPopularMoviesDB = popularMoviesDB;
-        this.mEntityMapper = entityMapper;
+        mNetworkUtil = networkUtil;
+        mPopularMovieDataSourceFactory = popularMovieDataSourceFactory;
+        mTopRatedMovieDataSourceFactory = topRatedMovieDataSourceFactory;
+        mPopularMoviesDB = popularMoviesDB;
+        mEntityMapper = entityMapper;
     }
 
     public LiveData<Boolean> getNetworkStatus() {
@@ -58,28 +64,37 @@ public class MovieRepository {
         return mMovies;
     }
 
+    public PopularMovieDataSourceFactory getPopularMovieDataSourceFactory() {
+        setNetworkStatus();
+        return mPopularMovieDataSourceFactory;
+    }
 
-    public void getPopularMovies() {
+    public TopRatedMovieDataSourceFactory getTopRatedMovieDataSourceFactory() {
+        setNetworkStatus();
+        return mTopRatedMovieDataSourceFactory;
+    }
+
+    /*public void getPopularMovies() {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
             mPagedTopRatedMovieNetworkSource.getPopularMoviesRemote();
             mMovies = mPagedTopRatedMovieNetworkSource.getMovies();
         }
-    }
+    }*/
 
     private void setNetworkStatus() {
         mNetworkStatus.postValue(mNetworkUtil.isConnected());
     }
 
-    public void getTopRatedMovies() {
+    /*public void getTopRatedMovies() {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
             mPagedTopRatedMovieNetworkSource.getTopRatedMoviesRemote(1, callback, null, (long) 2);
             mMovies = mPagedTopRatedMovieNetworkSource.getMovies();
         }
-    }
+    }*/
 
     public LiveData<List<Movie>> getFavoriteMovies() {
         disposables.add(
@@ -121,12 +136,7 @@ public class MovieRepository {
         );
     }
 
-    public MutableLiveData<Throwable> getError() {
-        return mPagedTopRatedMovieNetworkSource.getError();
-    }
-
     public void dispose() {
-            mPagedTopRatedMovieNetworkSource.dispose();
             disposables.dispose();
     }
 

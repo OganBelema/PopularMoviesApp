@@ -1,14 +1,13 @@
 package com.oganbelema.network.source;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
 import com.oganbelema.network.MoviesApi;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.network.model.movie.MovieResponse;
-
-import java.util.List;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -17,33 +16,34 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
+
 public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Movie> {
 
     private final MoviesApi mMoviesApi;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final MutableLiveData<List<Movie>> mMovies = new MutableLiveData<>();
-
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
+    private final MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
 
-    public PagedPopularMovieNetworkSource(MoviesApi mMoviesApi) {
-        this.mMoviesApi = mMoviesApi;
+
+    public PagedPopularMovieNetworkSource(MoviesApi moviesApi) {
+        mMoviesApi = moviesApi;
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Movie> callback) {
+    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull final LoadInitialCallback<Long, Movie> callback) {
         getPopularMoviesRemote(1, callback, null, null, (long) 2);
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Movie> callback) {
+    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull final LoadCallback<Long, Movie> callback) {
 
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Movie> callback) {
+    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull final LoadCallback<Long, Movie> callback) {
         getPopularMoviesRemote(params.key, null, callback, null, params.key + 1);
     }
 
@@ -55,27 +55,29 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
                     @Override
                     public void onSubscribe(Disposable disposable) {
                         disposables.add(disposable);
+                        mLoading.postValue(true);
                     }
 
                     @Override
                     public void onSuccess(Response<MovieResponse> popularMovieResponse) {
                         handleSuccessfulMovieRequest(initialCallback, callback, previousPage, nextPage, popularMovieResponse);
+                        mLoading.postValue(false);
                     }
 
                     @Override
                     public void onError(Throwable error) {
+                        mLoading.postValue(false);
                         mError.postValue(error);
                     }
                 });
     }
 
-    private void handleSuccessfulMovieRequest(LoadInitialCallback<Long, Movie> loadInitialCallback, LoadCallback<Long, Movie> callback, Long previousPage, Long nextPage, Response<MovieResponse> movieResponse) {
+    private void handleSuccessfulMovieRequest(LoadInitialCallback<Long, Movie> loadInitialCallback, LoadCallback<Long, Movie> callback, Long previousPage, Long nextPage, final Response<MovieResponse> movieResponse) {
         if (movieResponse != null) {
             if (movieResponse.isSuccessful()) {
-                MovieResponse responseBody = movieResponse.body();
+                final MovieResponse responseBody = movieResponse.body();
 
                 if (responseBody != null) {
-                    mMovies.postValue(responseBody.getMovies());
                     if (loadInitialCallback != null) {
                         loadInitialCallback.onResult(responseBody.getMovies(), previousPage, nextPage);
                     } else {
@@ -84,5 +86,17 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
                 }
             }
         }
+    }
+
+    public LiveData<Throwable> getError() {
+        return mError;
+    }
+
+    public LiveData<Boolean> getLoading() {
+        return mLoading;
+    }
+
+    public void dispose(){
+        disposables.dispose();
     }
 }

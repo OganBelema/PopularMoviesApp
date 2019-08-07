@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.oganbelema.popularmovies.movie.MovieAdapter;
+import com.oganbelema.popularmovies.movie.MoviesDiffCallback;
+import com.oganbelema.popularmovies.movie.MoviesDiffItemCallback;
+import com.oganbelema.popularmovies.movie.PagedMovieAdapter;
 import com.oganbelema.popularmovies.reviews.MovieReviewAdapter;
 import com.oganbelema.popularmovies.trailer.MovieTrailerAdapter;
 
@@ -30,6 +33,11 @@ public class AppModule {
     @Provides
     public MovieAdapter provideMovieAdapter(){
         return new MovieAdapter();
+    }
+
+    @Provides
+    public PagedMovieAdapter providePagedMovieAdapter(){
+        return new PagedMovieAdapter(new MoviesDiffItemCallback());
     }
 
     @Provides
