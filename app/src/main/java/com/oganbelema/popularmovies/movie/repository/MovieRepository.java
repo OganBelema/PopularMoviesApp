@@ -8,7 +8,7 @@ import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.EntityMapper;
 import com.oganbelema.network.NetworkUtil;
 import com.oganbelema.network.model.movie.Movie;
-import com.oganbelema.network.source.MovieNetworkSource;
+import com.oganbelema.network.source.PagedTopRatedMovieNetworkSource;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class MovieRepository {
 
     private final NetworkUtil mNetworkUtil;
 
-    private final MovieNetworkSource mMovieNetworkSource;
+    private final PagedTopRatedMovieNetworkSource mPagedTopRatedMovieNetworkSource;
 
     private final PopularMoviesDB mPopularMoviesDB;
 
@@ -40,12 +40,12 @@ public class MovieRepository {
     private MutableLiveData<Boolean> mNetworkStatus = new MutableLiveData<>();
 
     @Inject
-    public MovieRepository(NetworkUtil networkUtil, MovieNetworkSource movieNetworkSource,
+    public MovieRepository(NetworkUtil networkUtil, PagedTopRatedMovieNetworkSource pagedTopRatedMovieNetworkSource,
                            PopularMoviesDB popularMoviesDB,
                            EntityMapper<FavoriteMovieEntity, Movie>
                                    entityMapper) {
         this.mNetworkUtil = networkUtil;
-        this.mMovieNetworkSource = movieNetworkSource;
+        this.mPagedTopRatedMovieNetworkSource = pagedTopRatedMovieNetworkSource;
         this.mPopularMoviesDB = popularMoviesDB;
         this.mEntityMapper = entityMapper;
     }
@@ -63,8 +63,8 @@ public class MovieRepository {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
-            mMovieNetworkSource.getPopularMoviesRemote();
-            mMovies = mMovieNetworkSource.getMovies();
+            mPagedTopRatedMovieNetworkSource.getPopularMoviesRemote();
+            mMovies = mPagedTopRatedMovieNetworkSource.getMovies();
         }
     }
 
@@ -76,8 +76,8 @@ public class MovieRepository {
         setNetworkStatus();
 
         if (mNetworkUtil.isConnected()) {
-            mMovieNetworkSource.getTopRatedMoviesRemote();
-            mMovies = mMovieNetworkSource.getMovies();
+            mPagedTopRatedMovieNetworkSource.getTopRatedMoviesRemote(1, callback, null, (long) 2);
+            mMovies = mPagedTopRatedMovieNetworkSource.getMovies();
         }
     }
 
@@ -122,11 +122,11 @@ public class MovieRepository {
     }
 
     public MutableLiveData<Throwable> getError() {
-        return mMovieNetworkSource.getError();
+        return mPagedTopRatedMovieNetworkSource.getError();
     }
 
     public void dispose() {
-            mMovieNetworkSource.dispose();
+            mPagedTopRatedMovieNetworkSource.dispose();
             disposables.dispose();
     }
 

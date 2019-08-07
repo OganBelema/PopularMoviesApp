@@ -1,7 +1,9 @@
 package com.oganbelema.network.source;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.paging.PageKeyedDataSource;
 
 
 import com.oganbelema.network.MoviesApi;
@@ -21,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 @Singleton
-public class MovieNetworkSource {
+public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, Movie> {
 
     private final MoviesApi mMoviesApi;
 
@@ -32,12 +34,27 @@ public class MovieNetworkSource {
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
     @Inject
-    public MovieNetworkSource(MoviesApi mMoviesApi) {
+    public PagedTopRatedMovieNetworkSource(MoviesApi mMoviesApi) {
         this.mMoviesApi = mMoviesApi;
     }
 
-    public void getTopRatedMoviesRemote() {
-        mMoviesApi.getTopRatedMovies()
+    @Override
+    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Long, Movie> callback) {
+        getTopRatedMoviesRemote(1, callback,null, null, (long) 2);
+    }
+
+    @Override
+    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Movie> callback) {
+
+    }
+
+    @Override
+    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Movie> callback) {
+        getTopRatedMoviesRemote(params.key, null, callback, null, params.key + 1);
+    }
+
+    public void getTopRatedMoviesRemote(final long currentPage, final LoadInitialCallback<Long, Movie> initialCallback, final LoadCallback<Long, Movie> callback, final Long previousPage, final Long nextPage) {
+        mMoviesApi.getTopRatedMovies(currentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Response<MovieResponse>>() {
@@ -48,7 +65,7 @@ public class MovieNetworkSource {
 
                     @Override
                     public void onSuccess(Response<MovieResponse> topRatedMovieResponse) {
-                        handleSuccessfulMovieRequest(topRatedMovieResponse);
+                        handleSuccessfulMovieRequest(initialCallback, callback, previousPage, nextPage, topRatedMovieResponse);
                     }
 
                     @Override
@@ -58,35 +75,19 @@ public class MovieNetworkSource {
                 });
     }
 
-    public void getPopularMoviesRemote() {
-        mMoviesApi.getPopularMovies()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<Response<MovieResponse>>() {
-                    @Override
-                    public void onSubscribe(Disposable disposable) {
-                        disposables.add(disposable);
-                    }
-
-                    @Override
-                    public void onSuccess(Response<MovieResponse> popularMovieResponse) {
-                        handleSuccessfulMovieRequest(popularMovieResponse);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        mError.postValue(error);
-                    }
-                });
-    }
-
-    private void handleSuccessfulMovieRequest(Response<MovieResponse> movieResponse) {
+    private void handleSuccessfulMovieRequest(LoadInitialCallback<Long, Movie> initialCallback, LoadCallback<Long, Movie> callback, Long previousPage, Long nextPage, Response<MovieResponse> movieResponse) {
         if (movieResponse != null) {
             if (movieResponse.isSuccessful()) {
                 MovieResponse responseBody = movieResponse.body();
 
                 if (responseBody != null) {
                     mMovies.postValue(responseBody.getMovies());
+                    if (initialCallback != null){
+                        initialCallback.onResult(responseBody.getMovies(),previousPage, nextPage);
+                    } else {
+                        callback.onResult(responseBody.getMovies(), nextPage);
+                    }
+
                 }
             }
         }
