@@ -12,9 +12,6 @@ import com.oganbelema.network.model.movie.MovieResponse;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -22,7 +19,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
-@Singleton
 public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, Movie> {
 
     private final MoviesApi mMoviesApi;
@@ -33,7 +29,7 @@ public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, M
 
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
-    @Inject
+
     public PagedTopRatedMovieNetworkSource(MoviesApi mMoviesApi) {
         this.mMoviesApi = mMoviesApi;
     }

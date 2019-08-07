@@ -10,8 +10,6 @@ import com.oganbelema.network.model.movie.MovieResponse;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -29,7 +27,7 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
 
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
-    @Inject
+
     public PagedPopularMovieNetworkSource(MoviesApi mMoviesApi) {
         this.mMoviesApi = mMoviesApi;
     }
@@ -49,7 +47,7 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
         getPopularMoviesRemote(params.key, null, callback, null, params.key + 1);
     }
 
-    public void getPopularMoviesRemote(final long page, final LoadInitialCallback<Long, Movie> initialCallback, final LoadCallback<Long, Movie> callback, final Long previousPage, final Long nextPage) {
+    private void getPopularMoviesRemote(final long page, final LoadInitialCallback<Long, Movie> initialCallback, final LoadCallback<Long, Movie> callback, final Long previousPage, final Long nextPage) {
         mMoviesApi.getPopularMovies(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
