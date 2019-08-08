@@ -38,7 +38,4 @@ public class TopRatedMovieDataSourceFactory extends DataSource.Factory {
         return mTopRatedMovieNetworkSourceMutableLiveData;
     }
 
-    public PagedTopRatedMovieNetworkSource getPagedTopRatedMovieNetworkSource() {
-        return mPagedTopRatedMovieNetworkSource;
-    }
 }

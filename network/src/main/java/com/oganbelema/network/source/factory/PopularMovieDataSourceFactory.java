@@ -38,7 +38,4 @@ public class PopularMovieDataSourceFactory extends DataSource.Factory {
         return mPagedPopularMovieNetworkSourceMutableLiveData;
     }
 
-    public PagedPopularMovieNetworkSource getPagedPopularMovieNetworkSource() {
-        return mPagedPopularMovieNetworkSource;
-    }
 }

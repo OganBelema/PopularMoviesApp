@@ -79,6 +79,14 @@ public class MovieViewModel extends ViewModel {
         return mMovieRepository.getTopRatedMovies();
     }
 
+    public void resetPopularMovies(){
+        mMovieRepository.resetPopularMovies();
+    }
+
+    public void resetTopRatedMovies(){
+        mMovieRepository.resetTopRatedMovies();
+    }
+
     @Override
     protected void onCleared() {
         mMovieRepository.dispose();

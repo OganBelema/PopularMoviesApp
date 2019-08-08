@@ -177,13 +177,27 @@ public class MovieRepository {
                 .build();
     }
 
+    public void resetPopularMovies(){
+        if (mPopularMovieLiveData.getValue() != null){
+            mPopularMovieLiveData.getValue().getDataSource().invalidate();
+        }
+    }
+
+    public void resetTopRatedMovies(){
+        if (mTopRatedMovieLiveData.getValue() != null){
+            mTopRatedMovieLiveData.getValue().getDataSource().invalidate();
+        }
+    }
+
     public void dispose() {
-        if (mPopularMovieDataSourceFactory.getPagedPopularMovieNetworkSource() != null){
-            mPopularMovieDataSourceFactory.getPagedPopularMovieNetworkSource().dispose();
+        if (mPopularMovieLiveData.getValue() != null){
+            ((PagedPopularMovieNetworkSource) mPopularMovieLiveData.getValue()
+                    .getDataSource()).dispose();
         }
 
-        if (mTopRatedMovieDataSourceFactory.getPagedTopRatedMovieNetworkSource() != null){
-            mTopRatedMovieDataSourceFactory.getPagedTopRatedMovieNetworkSource().dispose();
+        if (mTopRatedMovieLiveData.getValue() != null){
+            ((PagedTopRatedMovieNetworkSource) mTopRatedMovieLiveData.getValue()
+                    .getDataSource()).dispose();
         }
 
         disposables.dispose();

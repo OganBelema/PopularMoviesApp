@@ -122,6 +122,18 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
             }
         });
 
+        mActivityPopularMoviesListBinding.swipeRefresh.setOnRefreshListener(() -> {
+            if (mMovieViewModel.getRawFilterOption() != null){
+                if (mMovieViewModel.getRawFilterOption().equals(FilterOptions.POPULAR_MOVIES)){
+                    mMovieViewModel.resetPopularMovies();
+                } else if (mMovieViewModel.getRawFilterOption().equals(FilterOptions.FAVORITE_MOVIES)){
+                    mMovieViewModel.resetTopRatedMovies();
+                }
+            }
+
+            mActivityPopularMoviesListBinding.swipeRefresh.setRefreshing(false);
+        });
+
     }
 
     private void handleFilterOption(FilterOptions filterOptions) {
