@@ -2,13 +2,19 @@ package com.oganbelema.popularmovies.movie.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.oganbelema.database.PopularMoviesDB;
 import com.oganbelema.database.entity.FavoriteMovieEntity;
 import com.oganbelema.database.mapper.EntityMapper;
 import com.oganbelema.network.NetworkUtil;
 import com.oganbelema.network.model.movie.Movie;
-import com.oganbelema.network.source.MovieNetworkSource;
+import com.oganbelema.network.source.PagedPopularMovieNetworkSource;
+import com.oganbelema.network.source.PagedTopRatedMovieNetworkSource;
+import com.oganbelema.network.source.factory.PopularMovieDataSourceFactory;
+import com.oganbelema.network.source.factory.TopRatedMovieDataSourceFactory;
 
 import java.util.List;
 
@@ -25,13 +31,13 @@ public class MovieRepository {
 
     private final NetworkUtil mNetworkUtil;
 
-    private final MovieNetworkSource mMovieNetworkSource;
+    private final PopularMovieDataSourceFactory mPopularMovieDataSourceFactory;
+
+    private final TopRatedMovieDataSourceFactory mTopRatedMovieDataSourceFactory;
 
     private final PopularMoviesDB mPopularMoviesDB;
 
     private final EntityMapper<FavoriteMovieEntity, Movie> mEntityMapper;
-
-    private LiveData<List<Movie>> mMovies = new MutableLiveData<>();
 
     private final MutableLiveData<List<Movie>> mFavoriteMovies = new MutableLiveData<>();
 
@@ -39,46 +45,50 @@ public class MovieRepository {
 
     private MutableLiveData<Boolean> mNetworkStatus = new MutableLiveData<>();
 
+    private LiveData<Throwable> mError;
+
+    private LiveData<Boolean> mLoading;
+
+    private final PagedList.Config mPagedListConfig;
+
+    private LiveData<PagedList<Movie>> mPopularMovieLiveData;
+
+    private LiveData<PagedList<Movie>> mTopRatedMovieLiveData;
+
     @Inject
-    public MovieRepository(NetworkUtil networkUtil, MovieNetworkSource movieNetworkSource,
+    public MovieRepository(NetworkUtil networkUtil,
+                           PopularMovieDataSourceFactory popularMovieDataSourceFactory,
+                           TopRatedMovieDataSourceFactory topRatedMovieDataSourceFactory,
                            PopularMoviesDB popularMoviesDB,
                            EntityMapper<FavoriteMovieEntity, Movie>
                                    entityMapper) {
-        this.mNetworkUtil = networkUtil;
-        this.mMovieNetworkSource = movieNetworkSource;
-        this.mPopularMoviesDB = popularMoviesDB;
-        this.mEntityMapper = entityMapper;
+        mNetworkUtil = networkUtil;
+        mPopularMovieDataSourceFactory = popularMovieDataSourceFactory;
+        mTopRatedMovieDataSourceFactory = topRatedMovieDataSourceFactory;
+        mPopularMoviesDB = popularMoviesDB;
+        mEntityMapper = entityMapper;
+        mPagedListConfig = (new PagedList.Config.Builder())
+                .setPageSize(20)
+                .setPrefetchDistance(10)
+                .build();
+        setupPopularMoviesDataSource();
+        setupTopRatedMoviesDataSource();
     }
 
     public LiveData<Boolean> getNetworkStatus() {
         return mNetworkStatus;
     }
 
-    public LiveData<List<Movie>> getMovies() {
-        return mMovies;
+    public LiveData<Throwable> getError() {
+        return mError;
     }
 
-
-    public void getPopularMovies() {
-        setNetworkStatus();
-
-        if (mNetworkUtil.isConnected()) {
-            mMovieNetworkSource.getPopularMoviesRemote();
-            mMovies = mMovieNetworkSource.getMovies();
-        }
+    public LiveData<Boolean> getLoading() {
+        return mLoading;
     }
 
     private void setNetworkStatus() {
         mNetworkStatus.postValue(mNetworkUtil.isConnected());
-    }
-
-    public void getTopRatedMovies() {
-        setNetworkStatus();
-
-        if (mNetworkUtil.isConnected()) {
-            mMovieNetworkSource.getTopRatedMoviesRemote();
-            mMovies = mMovieNetworkSource.getMovies();
-        }
     }
 
     public LiveData<List<Movie>> getFavoriteMovies() {
@@ -121,13 +131,62 @@ public class MovieRepository {
         );
     }
 
-    public MutableLiveData<Throwable> getError() {
-        return mMovieNetworkSource.getError();
+    public LiveData<PagedList<Movie>> getPopularMovies(){
+        setNetworkStatus();
+        listenFromPopularMovies();
+        return mPopularMovieLiveData;
+    }
+
+    private void listenFromPopularMovies() {
+        mError = Transformations.switchMap(mPopularMovieDataSourceFactory
+                        .getPagedPopularMovieNetworkSourceMutableLiveData(),
+                PagedPopularMovieNetworkSource::getError);
+
+        mLoading = Transformations.switchMap(mPopularMovieDataSourceFactory
+                .getPagedPopularMovieNetworkSourceMutableLiveData(),
+                PagedPopularMovieNetworkSource::getLoading);
+    }
+
+    private void setupPopularMoviesDataSource(){
+        mPopularMovieLiveData = new LivePagedListBuilder<Long, Movie>(
+                mPopularMovieDataSourceFactory, mPagedListConfig)
+                .build();
+
+        listenFromPopularMovies();
+    }
+
+    public LiveData<PagedList<Movie>> getTopRatedMovies(){
+        setNetworkStatus();
+        listenFromTopRatedMovies();
+        return mTopRatedMovieLiveData;
+    }
+
+    private void listenFromTopRatedMovies() {
+        mError = Transformations.switchMap(mTopRatedMovieDataSourceFactory
+                        .getTopRatedMovieNetworkSourceMutableLiveData(),
+                PagedTopRatedMovieNetworkSource::getError);
+
+        mLoading = Transformations.switchMap(mTopRatedMovieDataSourceFactory
+                        .getTopRatedMovieNetworkSourceMutableLiveData(),
+                PagedTopRatedMovieNetworkSource::getLoading);
+    }
+
+    private void setupTopRatedMoviesDataSource(){
+        mTopRatedMovieLiveData = new LivePagedListBuilder<Long, Movie>(
+                mTopRatedMovieDataSourceFactory, mPagedListConfig)
+                .build();
     }
 
     public void dispose() {
-            mMovieNetworkSource.dispose();
-            disposables.dispose();
+        if (mPopularMovieDataSourceFactory.getPagedPopularMovieNetworkSource() != null){
+            mPopularMovieDataSourceFactory.getPagedPopularMovieNetworkSource().dispose();
+        }
+
+        if (mTopRatedMovieDataSourceFactory.getPagedTopRatedMovieNetworkSource() != null){
+            mTopRatedMovieDataSourceFactory.getPagedTopRatedMovieNetworkSource().dispose();
+        }
+
+        disposables.dispose();
     }
 
 }

@@ -3,9 +3,11 @@ package com.oganbelema.popularmovies.movie.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.paging.PagedList;
 
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.movie.FilterOptions;
+import com.oganbelema.popularmovies.movie.PagedMovieAdapter;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.MovieAdapter;
 
@@ -18,27 +20,28 @@ public class MovieViewModel extends ViewModel {
 
     private final MovieAdapter mMovieAdapter;
 
-    public MovieViewModel(MovieRepository movieRepository, MovieAdapter movieAdapter) {
-        mMovieRepository = movieRepository;
-        mMovieAdapter = movieAdapter;
-        filterOptions.setValue(FilterOptions.POPULAR_MOVIES);
-    }
+    private final PagedMovieAdapter mPagedMovieAdapter;
 
     private MutableLiveData<FilterOptions> filterOptions = new MutableLiveData<>();
+
+
+    public MovieViewModel(MovieRepository movieRepository, MovieAdapter movieAdapter,
+                          PagedMovieAdapter pagedMovieAdapter) {
+        mMovieRepository = movieRepository;
+        mMovieAdapter = movieAdapter;
+        mPagedMovieAdapter = pagedMovieAdapter;
+        filterOptions.setValue(FilterOptions.POPULAR_MOVIES);
+    }
 
     public MovieAdapter getMovieAdapter() {
         return mMovieAdapter;
     }
 
-    public LiveData<List<Movie>> getPopularMovies(){
-        mMovieRepository.getPopularMovies();
-        return mMovieRepository.getMovies();
+    public PagedMovieAdapter getPagedMovieAdapter() {
+        return mPagedMovieAdapter;
     }
 
-    public LiveData<List<Movie>> getTopRatedMovies(){
-        mMovieRepository.getTopRatedMovies();
-        return mMovieRepository.getMovies();
-    }
+
 
     public LiveData<List<Movie>> getFavoriteMovies(){
         return mMovieRepository.getFavoriteMovies();
@@ -62,6 +65,18 @@ public class MovieViewModel extends ViewModel {
 
     public FilterOptions getRawFilterOption(){
         return filterOptions.getValue();
+    }
+
+    public LiveData<Boolean> getLoading() {
+        return mMovieRepository.getLoading();
+    }
+
+    public LiveData<PagedList<Movie>> getPopularMovieLiveData() {
+        return mMovieRepository.getPopularMovies();
+    }
+
+    public LiveData<PagedList<Movie>> getTopRatedMovieLiveData() {
+        return mMovieRepository.getTopRatedMovies();
     }
 
     @Override

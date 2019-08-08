@@ -3,6 +3,7 @@ package com.oganbelema.popularmovies.ui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,9 +21,10 @@ import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.movie.FilterOptions;
 import com.oganbelema.popularmovies.movie.MovieAdapter;
+import com.oganbelema.popularmovies.movie.MovieItemOnClickListener;
+import com.oganbelema.popularmovies.movie.PagedMovieAdapter;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModelFactory;
 import com.oganbelema.popularmovies.R;
-import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModel;
 
 import java.util.List;
@@ -32,16 +34,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieListActivity extends AppCompatActivity implements MovieAdapter.MovieItemOnClickListener {
+public class MovieListActivity extends AppCompatActivity implements MovieItemOnClickListener {
 
     private final String TAG = MovieListActivity.class.getSimpleName();
 
     private static final int GRID_SPAN_PORTRAIT = 2;
 
     private static final int GRID_SPAN_HORIZONTAL = 3;
-
-    @Inject
-    public MovieRepository mMovieRepository;
 
     @Inject
     public MovieViewModelFactory mMovieViewModelFactory;
@@ -65,6 +64,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
     private MovieAdapter mMovieAdapter;
 
+    private PagedMovieAdapter mPagedMovieAdapter;
+
     private GridLayoutManager mGridLayoutManager;
 
     @Override
@@ -81,13 +82,15 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
         mMovieAdapter = mMovieViewModel.getMovieAdapter();
 
+        mPagedMovieAdapter = mMovieViewModel.getPagedMovieAdapter();
+
         mMovieAdapter.setMovieItemOnClickListener(this);
+
+        mPagedMovieAdapter.setMovieItemOnClickListener(this);
 
         mGridLayoutManager = new GridLayoutManager(this, GRID_SPAN_PORTRAIT);
 
         mMoviesRecyclerView.setLayoutManager(mGridLayoutManager);
-
-        mMoviesRecyclerView.setAdapter(mMovieAdapter);
 
         mMovieViewModel.getFilterOptions().observe(this, this::handleFilterOption);
 
@@ -171,25 +174,28 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
 
     private void filterToTopRatedMovies() {
         setTitle(R.string.top_rated_movies);
+        mMoviesRecyclerView.setAdapter(mPagedMovieAdapter);
         getTopRatedMovies();
     }
 
     private void filterToPopularMovies() {
         setTitle(R.string.popular_movies);
+        mMoviesRecyclerView.setAdapter(mPagedMovieAdapter);
         getPopularMovies();
     }
 
     private void filterToFavoriteMovies() {
         setTitle(R.string.favorite_movies);
+        mMoviesRecyclerView.setAdapter(mMovieAdapter);
         getFavoriteMovies();
     }
 
     private void getPopularMovies() {
         showLoaderView();
 
-        mMovieViewModel.getPopularMovies().observe(this, popularMovies -> {
+        mMovieViewModel.getPopularMovieLiveData().observe(this, popularMovies -> {
                     if (popularMovies != null) {
-                        displayMovies(popularMovies);
+                        displayPagedMovies(popularMovies);
                     }
                 });
     }
@@ -197,9 +203,9 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
     private void getTopRatedMovies() {
         showLoaderView();
 
-        mMovieViewModel.getTopRatedMovies().observe(this, topRatedMovies -> {
+        mMovieViewModel.getTopRatedMovieLiveData().observe(this, topRatedMovies -> {
             if (topRatedMovies != null) {
-                displayMovies(topRatedMovies);
+                displayPagedMovies(topRatedMovies);
             }
         });
     }
@@ -218,6 +224,15 @@ public class MovieListActivity extends AppCompatActivity implements MovieAdapter
         if (movies != null && !movies.isEmpty()){
             showMoviesView();
             mMovieAdapter.setMovies(movies);
+        } else {
+            showNoMoviesView();
+        }
+    }
+
+    private void displayPagedMovies(PagedList<Movie> movies){
+        if (movies != null){
+            showMoviesView();
+            mPagedMovieAdapter.submitList(movies);
         } else {
             showNoMoviesView();
         }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.oganbelema.popularmovies.movie.PagedMovieAdapter;
 import com.oganbelema.popularmovies.movie.repository.MovieRepository;
 import com.oganbelema.popularmovies.movie.MovieAdapter;
 
@@ -17,16 +18,20 @@ public class MovieViewModelFactory implements ViewModelProvider.Factory {
 
     private final MovieAdapter mMovieAdapter;
 
+    private final PagedMovieAdapter mPagedMovieAdapter;
+
     @Inject
-    public MovieViewModelFactory(MovieRepository movieRepository, MovieAdapter movieAdapter) {
+    public MovieViewModelFactory(MovieRepository movieRepository, MovieAdapter movieAdapter,
+                                 PagedMovieAdapter pagedMovieAdapter) {
         mMovieRepository = movieRepository;
         mMovieAdapter = movieAdapter;
+        mPagedMovieAdapter = pagedMovieAdapter;
     }
 
     @NonNull
     @SuppressWarnings("unchecked")
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new MovieViewModel(mMovieRepository, mMovieAdapter);
+        return (T) new MovieViewModel(mMovieRepository, mMovieAdapter, mPagedMovieAdapter);
     }
 }
