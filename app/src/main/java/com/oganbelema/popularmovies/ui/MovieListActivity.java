@@ -2,6 +2,7 @@ package com.oganbelema.popularmovies.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.popularmovies.PopularMoviesApp;
+import com.oganbelema.popularmovies.databinding.ActivityPopularMoviesListBinding;
 import com.oganbelema.popularmovies.movie.FilterOptions;
 import com.oganbelema.popularmovies.movie.MovieAdapter;
 import com.oganbelema.popularmovies.movie.MovieItemOnClickListener;
@@ -30,9 +32,6 @@ import com.oganbelema.popularmovies.movie.viewmodel.MovieViewModel;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MovieListActivity extends AppCompatActivity implements MovieItemOnClickListener {
 
@@ -47,19 +46,12 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
 
     private MovieViewModel mMovieViewModel;
 
-    @BindView(R.id.loaderViews)
     Group mLoadingIndicatorViews;
 
-    @BindView(R.id.errorViews)
     Group mErrorViews;
 
-    @BindView(R.id.moviesRecyclerView)
     RecyclerView mMoviesRecyclerView;
 
-    @BindView(R.id.errorTextView)
-    TextView errorTextView;
-
-    @BindView(R.id.noMoviesTextView)
     TextView mNoMoviesTextView;
 
     private MovieAdapter mMovieAdapter;
@@ -71,9 +63,17 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_popular_movies_list);
 
-        ButterKnife.bind(this);
+        ActivityPopularMoviesListBinding mActivityPopularMoviesListBinding = DataBindingUtil
+                .setContentView(this, R.layout.activity_popular_movies_list);
+
+        mLoadingIndicatorViews = mActivityPopularMoviesListBinding.loaderViews;
+
+        mErrorViews = mActivityPopularMoviesListBinding.errorViews;
+
+        mMoviesRecyclerView = mActivityPopularMoviesListBinding.moviesRecyclerView;
+
+        mNoMoviesTextView = mActivityPopularMoviesListBinding.noMoviesTextView;
 
         ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
@@ -101,7 +101,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
             }
         });
 
-        errorTextView.setOnClickListener(view -> {
+        mActivityPopularMoviesListBinding.errorTextView.setOnClickListener(view -> {
             FilterOptions option = mMovieViewModel.getRawFilterOption();
 
             if (option == null){

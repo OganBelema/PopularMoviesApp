@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,8 +37,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MovieViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item,  parent,
-                        false));
+                DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                        R.layout.movie_item,  parent, false));
     }
 
     @Override

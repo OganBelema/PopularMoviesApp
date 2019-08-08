@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@color/colorPrimary">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/trailerNameTextView"
-        android:layout_width="0dp"
+    <data>
+        <variable
+            name="trailer"
+            type="com.oganbelema.network.model.trailer.Trailer" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tools:text="Fade away"
-        android:textColor="@android:color/white"
         android:layout_margin="8dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        app:srcCompat="@drawable/ic_play_arrow_24dp"
-        android:contentDescription="@string/play_icon"/>
+        <TextView
+            android:id="@+id/trailerNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@android:color/white"
+            tools:text="Fade away"
+            android:text="@{trailer.name}"/>
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:contentDescription="@string/play_icon"
+            app:srcCompat="@drawable/ic_play_arrow_24dp" />
+
+    </LinearLayout>
+</layout>

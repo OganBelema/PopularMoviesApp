@@ -2,9 +2,9 @@ package com.oganbelema.popularmovies.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.oganbelema.network.model.movie.Movie;
@@ -22,6 +20,7 @@ import com.oganbelema.network.model.trailer.Trailer;
 import com.oganbelema.popularmovies.Constants;
 import com.oganbelema.popularmovies.PopularMoviesApp;
 import com.oganbelema.popularmovies.R;
+import com.oganbelema.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.oganbelema.popularmovies.reviews.MovieReviewViewModel;
 import com.oganbelema.popularmovies.reviews.MovieReviewViewModelFactory;
 import com.oganbelema.popularmovies.service.FavoriteService;
@@ -38,9 +37,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MovieDetailActivity extends AppCompatActivity implements MovieTrailerAdapter.TrailerItemOnClickListener {
 
     private final String TAG = MovieDetailActivity.class.getSimpleName();
@@ -49,27 +45,6 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
 
     @Inject @Named(Constants.NAMED_IMAGE_URL)
     public String imageUrl;
-
-    @BindView(R.id.moviePosterImageView)
-    ImageView mMoviePosterImageView;
-
-    @BindView(R.id.movieTitleTextView)
-    TextView mMovieTitleTextView;
-
-    @BindView(R.id.releaseDateTextView)
-    TextView mMovieReleaseDateTextView;
-
-    @BindView(R.id.voteAverageTextView)
-    TextView mVoteAverageTextView;
-
-    @BindView(R.id.movieOverviewTextView)
-    TextView mMovieOverviewTextView;
-
-    @BindView(R.id.reviewsRecyclerView)
-    RecyclerView mMovieReviewRecyclerView;
-
-    @BindView(R.id.trailersRecyclerView)
-    RecyclerView mMovieTrailerRecyclerView;
 
     @Inject
     public MovieReviewViewModelFactory mMovieReviewViewModelFactory;
@@ -86,13 +61,13 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
     private List<Review> mReviews;
 
     private List<Trailer> mTrailers;
+    private ActivityMovieDetailBinding mActivityMovieDetailBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-
-        ButterKnife.bind(this);
+        mActivityMovieDetailBinding = DataBindingUtil
+                .setContentView(this, R.layout.activity_movie_detail);
 
         ((PopularMoviesApp) getApplication()).getAppComponent().inject(this);
 
@@ -157,18 +132,18 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
     }
 
     private void setupMovieTrailerRecyclerView() {
-        mMovieTrailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mMovieTrailerRecyclerView.setAdapter(mMovieTrailerViewModel.getMovieTrailerAdapter());
+        mActivityMovieDetailBinding.trailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mActivityMovieDetailBinding.trailersRecyclerView.setAdapter(mMovieTrailerViewModel.getMovieTrailerAdapter());
         mMovieTrailerViewModel.getMovieTrailerAdapter().setMovieItemOnClickListener(this);
     }
 
     private void setUpMovieReviewRecyclerView() {
-        mMovieReviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mMovieReviewRecyclerView.setAdapter(mMovieReviewViewModel.getMovieReviewAdapter());
+        mActivityMovieDetailBinding.reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mActivityMovieDetailBinding.reviewsRecyclerView.setAdapter(mMovieReviewViewModel.getMovieReviewAdapter());
     }
 
     private void showMessageWithSnackbar(int stringResourceId) {
-        Snackbar.make(mMoviePosterImageView, getString(stringResourceId),
+        Snackbar.make(mActivityMovieDetailBinding.getRoot(), getString(stringResourceId),
                 Snackbar.LENGTH_LONG).show();
     }
 
@@ -177,12 +152,13 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
             setTitle(movie.getTitle());
 
             Picasso.get().load(imageUrl  + movie.getPosterPath())
-                    .into(mMoviePosterImageView);
+                    .into(mActivityMovieDetailBinding.moviePosterImageView);
 
-            mMovieTitleTextView.setText(movie.getTitle());
-            mMovieReleaseDateTextView.setText(getString(R.string.release_date, movie.getReleaseDate()));
-            mVoteAverageTextView.setText(getString(R.string.vote_average, movie.getVoteAverage()));
-            mMovieOverviewTextView.setText(movie.getOverview());
+            mActivityMovieDetailBinding.movieTitleTextView.setText(movie.getTitle());
+            mActivityMovieDetailBinding.releaseDateTextView.setText(getString(R.string.release_date,
+                    movie.getReleaseDate()));
+            mActivityMovieDetailBinding.voteAverageTextView.setText(getString(R.string.vote_average, movie.getVoteAverage()));
+            mActivityMovieDetailBinding.movieOverviewTextView.setText(movie.getOverview());
         }
     }
 
