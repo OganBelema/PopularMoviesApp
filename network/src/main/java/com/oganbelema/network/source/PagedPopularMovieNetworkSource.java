@@ -9,6 +9,11 @@ import com.oganbelema.network.MoviesApi;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.network.model.movie.MovieResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -81,6 +86,17 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
                     } else {
                         callback.onResult(responseBody.getMovies(), nextPage);
                     }
+                }
+            } else {
+                try {
+                    JSONObject jObjError = new JSONObject(movieResponse.errorBody().string());
+                    mError.postValue(new Throwable(jObjError.getString("status_message")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e){
+                    e.printStackTrace();
                 }
             }
         }

@@ -98,6 +98,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
             if (error != null){
                 showErrorView();
                 Log.e(TAG, error.getLocalizedMessage(), error);
+                Snackbar.make(mMoviesRecyclerView, error.getMessage(),
+                        Snackbar.LENGTH_LONG).show();
             }
         });
 
