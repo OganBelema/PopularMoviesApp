@@ -16,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
-
 public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Movie> {
 
     private final MoviesApi mMoviesApi;
@@ -26,7 +25,6 @@ public class PagedPopularMovieNetworkSource extends PageKeyedDataSource<Long, Mo
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
-
 
     public PagedPopularMovieNetworkSource(MoviesApi moviesApi) {
         mMoviesApi = moviesApi;

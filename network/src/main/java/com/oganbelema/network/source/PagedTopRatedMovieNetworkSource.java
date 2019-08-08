@@ -10,6 +10,7 @@ import com.oganbelema.network.MoviesApi;
 import com.oganbelema.network.model.movie.Movie;
 import com.oganbelema.network.model.movie.MovieResponse;
 
+
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -26,7 +27,6 @@ public class PagedTopRatedMovieNetworkSource extends PageKeyedDataSource<Long, M
     private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
-
 
     public PagedTopRatedMovieNetworkSource(MoviesApi mMoviesApi) {
         this.mMoviesApi = mMoviesApi;

@@ -18,6 +18,7 @@ public class PopularMovieDataSourceFactory extends DataSource.Factory {
 
     private final MutableLiveData<PagedPopularMovieNetworkSource> mPagedPopularMovieNetworkSourceMutableLiveData
             = new MutableLiveData<>();
+    private PagedPopularMovieNetworkSource mPagedPopularMovieNetworkSource;
 
     @Inject
     public PopularMovieDataSourceFactory(MoviesApi moviesApi) {
@@ -28,12 +29,16 @@ public class PopularMovieDataSourceFactory extends DataSource.Factory {
     @NonNull
     @Override
     public DataSource create() {
-        PagedPopularMovieNetworkSource pagedPopularMovieNetworkSource = new PagedPopularMovieNetworkSource(mMoviesApi);
-        mPagedPopularMovieNetworkSourceMutableLiveData.postValue(pagedPopularMovieNetworkSource);
-        return pagedPopularMovieNetworkSource;
+        mPagedPopularMovieNetworkSource = new PagedPopularMovieNetworkSource(mMoviesApi);
+        mPagedPopularMovieNetworkSourceMutableLiveData.postValue(mPagedPopularMovieNetworkSource);
+        return mPagedPopularMovieNetworkSource;
     }
 
     public LiveData<PagedPopularMovieNetworkSource> getPagedPopularMovieNetworkSourceMutableLiveData() {
         return mPagedPopularMovieNetworkSourceMutableLiveData;
+    }
+
+    public PagedPopularMovieNetworkSource getPagedPopularMovieNetworkSource() {
+        return mPagedPopularMovieNetworkSource;
     }
 }

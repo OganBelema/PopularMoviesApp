@@ -193,7 +193,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
     private void getPopularMovies() {
         showLoaderView();
 
-        mMovieViewModel.getPopularMovies().observe(this, popularMovies -> {
+        mMovieViewModel.getPopularMovieLiveData().observe(this, popularMovies -> {
                     if (popularMovies != null) {
                         displayPagedMovies(popularMovies);
                     }
@@ -203,7 +203,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
     private void getTopRatedMovies() {
         showLoaderView();
 
-        mMovieViewModel.getTopRatedMovies().observe(this, topRatedMovies -> {
+        mMovieViewModel.getTopRatedMovieLiveData().observe(this, topRatedMovies -> {
             if (topRatedMovies != null) {
                 displayPagedMovies(topRatedMovies);
             }
@@ -230,7 +230,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
     }
 
     private void displayPagedMovies(PagedList<Movie> movies){
-        if (movies != null && !movies.isEmpty()){
+        if (movies != null){
             showMoviesView();
             mPagedMovieAdapter.submitList(movies);
         } else {

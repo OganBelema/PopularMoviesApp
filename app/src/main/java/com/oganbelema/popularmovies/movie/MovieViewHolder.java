@@ -28,6 +28,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
         if (movie != null && movieItemOnClickListener != null) {
             Picasso.get().load(Constants.IMAGE_URL + movie.getPosterPath())
                     .error(R.drawable.ic_error_24dp)
+                    .placeholder(R.drawable.loading_anim)
                     .into(mMoviePosterImageView);
 
             itemView.setOnClickListener(v ->
