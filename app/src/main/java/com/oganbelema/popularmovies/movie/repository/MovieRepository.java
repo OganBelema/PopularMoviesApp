@@ -60,17 +60,14 @@ public class MovieRepository {
                            PopularMovieDataSourceFactory popularMovieDataSourceFactory,
                            TopRatedMovieDataSourceFactory topRatedMovieDataSourceFactory,
                            PopularMoviesDB popularMoviesDB,
-                           EntityMapper<FavoriteMovieEntity, Movie>
-                                   entityMapper) {
+                           EntityMapper<FavoriteMovieEntity, Movie> entityMapper,
+                           PagedList.Config config) {
         mNetworkUtil = networkUtil;
         mPopularMovieDataSourceFactory = popularMovieDataSourceFactory;
         mTopRatedMovieDataSourceFactory = topRatedMovieDataSourceFactory;
         mPopularMoviesDB = popularMoviesDB;
         mEntityMapper = entityMapper;
-        mPagedListConfig = (new PagedList.Config.Builder())
-                .setPageSize(20)
-                .setPrefetchDistance(10)
-                .build();
+        mPagedListConfig = config;
         setupPopularMoviesDataSource();
         setupTopRatedMoviesDataSource();
     }

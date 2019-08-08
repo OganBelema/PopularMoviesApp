@@ -3,6 +3,8 @@ package com.oganbelema.popularmovies.di.module;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.paging.PagedList;
+
 import com.oganbelema.popularmovies.movie.MovieAdapter;
 import com.oganbelema.popularmovies.movie.MoviesDiffCallback;
 import com.oganbelema.popularmovies.movie.MoviesDiffItemCallback;
@@ -48,5 +50,14 @@ public class AppModule {
     @Provides
     public MovieTrailerAdapter provideMovieTrailerAdapter(){
         return new MovieTrailerAdapter();
+    }
+
+    @Provides
+    @Singleton
+    public PagedList.Config providePagedListConfig(){
+        return (new PagedList.Config.Builder())
+                .setPageSize(20)
+                .setPrefetchDistance(10)
+                .build();
     }
 }
