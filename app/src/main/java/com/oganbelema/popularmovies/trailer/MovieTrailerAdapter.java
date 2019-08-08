@@ -1,22 +1,20 @@
 package com.oganbelema.popularmovies.trailer;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oganbelema.network.model.trailer.Trailer;
 import com.oganbelema.popularmovies.R;
+import com.oganbelema.popularmovies.databinding.TrailerItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -44,8 +42,9 @@ public class MovieTrailerAdapter extends
     @NonNull
     @Override
     public MovieTrailerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MovieTrailerViewHolder(LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.trailer_item, parent, false));
+        return new MovieTrailerViewHolder(
+                DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                        R.layout.trailer_item, parent, false));
     }
 
     @Override
@@ -94,16 +93,15 @@ public class MovieTrailerAdapter extends
 
     public class MovieTrailerViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.trailerNameTextView)
-        public TextView mTrailerNameTextView;
+        private final TrailerItemBinding mTrailerItemBinding;
 
-        public MovieTrailerViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public MovieTrailerViewHolder(@NonNull TrailerItemBinding trailerItemBinding) {
+            super(trailerItemBinding.getRoot());
+            mTrailerItemBinding = trailerItemBinding;
         }
 
         public void bindData(Trailer trailer){
-            mTrailerNameTextView.setText(trailer.getName());
+            mTrailerItemBinding.setTrailer(trailer);
 
             this.itemView.setOnClickListener(view ->
                     mTrailerItemOnClickListener.onTrailerItemClicked(trailer));

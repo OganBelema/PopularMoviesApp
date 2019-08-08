@@ -18,7 +18,7 @@ public class AuthInterceptor implements Interceptor {
         HttpUrl originalHttpUrl = originalRequest.url();
 
         HttpUrl newHttpUrl = originalHttpUrl.newBuilder().addQueryParameter("api_key",
-                "INSERT API KEY").build();
+                "eea9017e54feb5d72d52119f5dc5a642").build();
 
         Request newRequest = originalRequest.newBuilder().url(newHttpUrl).build();
 

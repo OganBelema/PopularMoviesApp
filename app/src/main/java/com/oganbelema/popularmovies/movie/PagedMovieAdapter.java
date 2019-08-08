@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -25,8 +26,8 @@ public class PagedMovieAdapter extends PagedListAdapter<Movie, MovieViewHolder> 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MovieViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_item, parent, false));
+        return new MovieViewHolder( DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                        R.layout.movie_item, parent, false));
     }
 
     @Override

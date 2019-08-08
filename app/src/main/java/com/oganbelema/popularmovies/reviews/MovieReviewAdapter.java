@@ -1,22 +1,20 @@
 package com.oganbelema.popularmovies.reviews;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oganbelema.network.model.review.Review;
 import com.oganbelema.popularmovies.R;
+import com.oganbelema.popularmovies.databinding.ReviewItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -35,8 +33,10 @@ public class MovieReviewAdapter extends
     @NonNull
     @Override
     public MovieReviewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MovieReviewViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.review_item, parent, false));
+        return new MovieReviewViewHolder(
+                DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                        R.layout.review_item, parent, false)
+                );
     }
 
     @Override
@@ -85,20 +85,15 @@ public class MovieReviewAdapter extends
 
     public class MovieReviewViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.reviewTextView)
-        TextView reviewTextView;
+        private final ReviewItemBinding mReviewItemBinding;
 
-        @BindView(R.id.reviewAuthorTextView)
-        TextView reviewAuthor;
-
-        public MovieReviewViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public MovieReviewViewHolder(@NonNull ReviewItemBinding reviewItemBinding) {
+            super(reviewItemBinding.getRoot());
+            mReviewItemBinding = reviewItemBinding;
         }
 
         void bindData(Review review){
-            reviewTextView.setText(review.getContent());
-            reviewAuthor.setText(review.getAuthor());
+            mReviewItemBinding.setReview(review);
         }
 
 
