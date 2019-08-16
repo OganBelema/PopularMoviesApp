@@ -13,7 +13,10 @@ Contains:
 - Mappers for mapping different entities from the different modules
 - ButterKnife for binding views
 
-<img src="screenshots/popular_movies.gif" width="200" height="400">
-<img src="screenshots/Screenshot_1558985405.png" width="200" height="400">
-<img src="screenshots/Screenshot_1558985409.png" width="200" height="400">
-<img src="screenshots/Screenshot_1558985418.png" width="200" height="400">
+<img src="screenshots/popular_movies.webm" width="200" height="400">
+<img src="screenshots/Screenshot_1565265240.png" width="200" height="400">
+<img src="screenshots/Screenshot_1565266337.png" width="200" height="400">
+<img src="screenshots/Screenshot_1565266341.png" width="200" height="400">
+<img src="screenshots/Screenshot_1565266345.png" width="200" height="400">
+<img src="screenshots/Screenshot_1565276478.png" width="200" height="400">
+<img src="screenshots/Screenshot_1565276483.png" width="200" height="400">
