@@ -13,8 +13,11 @@ Contains:
 - Mappers for mapping different entities from the different modules
 - ButterKnife for binding views
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/KPCqwD2kTL4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<img src="screenshots/Screenshot_1565265240.png" width="200" height="400">
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=KPCqwD2kTL4
+" target="_blank"><img src="http://img.youtube.com/vi/KPCqwD2kTL4/0.jpg" 
+alt="App demo video" width="560" height="315" border="10" /></a>
+
+<img src="screenshots/Screenshot_1565265240.png" width="200" height="400"> 
 <img src="screenshots/Screenshot_1565266337.png" width="200" height="400">
 <img src="screenshots/Screenshot_1565266341.png" width="200" height="400">
 <img src="screenshots/Screenshot_1565266345.png" width="200" height="400">
