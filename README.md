@@ -14,7 +14,7 @@ Contains:
 - ButterKnife for binding views
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KPCqwD2kTL4
-" target="_blank"><img src="http://img.youtube.com/vi/KPCqwD2kTL4/0.jpg" 
+" target="_blank"><img src="screenshots/popular_movie.png"
 alt="App demo video" width="560" height="315" border="10" /></a>
 
 <img src="screenshots/Screenshot_1565265240.png" width="200" height="400"> 
