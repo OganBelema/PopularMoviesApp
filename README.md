@@ -11,7 +11,7 @@ Contains:
 - Picasso to display images
 - Services for caching data
 - Mappers for mapping different entities from the different modules
-- ButterKnife for binding views
+- Android dataBinding library for binding data to layout views
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KPCqwD2kTL4
 " target="_blank"><img src="screenshots/popular_movie.png"
