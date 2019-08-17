@@ -17,9 +17,11 @@ Contains:
 " target="_blank"><img src="screenshots/popular_movie.png"
 alt="App demo video" width="560" height="315" border="10" /></a>
 
-<img src="screenshots/Screenshot_1565265240.png" width="200" height="400"> 
-<img src="screenshots/Screenshot_1565266337.png" width="200" height="400">
-<img src="screenshots/Screenshot_1565266341.png" width="200" height="400">
-<img src="screenshots/Screenshot_1565266345.png" width="200" height="400">
-<img src="screenshots/Screenshot_1565276478.png" width="200" height="400">
-<img src="screenshots/Screenshot_1565276483.png" width="200" height="400">
+<p float="left">
+  <img src="screenshots/Screenshot_1565265240.png" width="200" height="400"> 
+  <img src="screenshots/Screenshot_1565266337.png" width="200" height="400">
+  <img src="screenshots/Screenshot_1565266341.png" width="200" height="400">
+  <img src="screenshots/Screenshot_1565266345.png" width="200" height="400">
+  <img src="screenshots/Screenshot_1565276478.png" width="200" height="400">
+  <img src="screenshots/Screenshot_1565276483.png" width="200" height="400">
+</p>
