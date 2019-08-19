@@ -1,6 +1,10 @@
 package com.oganbelema.popularmovies.movie;
 
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oganbelema.network.model.movie.Movie;
@@ -13,7 +17,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
 
     private final MovieItemBinding mMovieItemBinding;
 
-    MovieViewHolder(@NonNull MovieItemBinding movieItemBinding) {
+    private MovieViewHolder(@NonNull MovieItemBinding movieItemBinding) {
         super(movieItemBinding.getRoot());
         mMovieItemBinding = movieItemBinding;
     }
@@ -28,5 +32,11 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
             itemView.setOnClickListener(v ->
                     movieItemOnClickListener.onMovieItemClicked(movie));
         }
+    }
+
+    public static MovieViewHolder getInstance(ViewGroup parent){
+        return new MovieViewHolder(
+                DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                        R.layout.movie_item,  parent, false));
     }
 }

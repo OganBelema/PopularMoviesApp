@@ -33,8 +33,14 @@ public class AppModule {
     }
 
     @Provides
-    public MovieAdapter provideMovieAdapter(){
-        return new MovieAdapter();
+    @Singleton
+    public MoviesDiffItemCallback provideMoviesDiffItemCallback(){
+        return new MoviesDiffItemCallback();
+    }
+
+    @Provides
+    public MovieAdapter provideMovieAdapter(MoviesDiffItemCallback moviesDiffItemCallback){
+        return new MovieAdapter(moviesDiffItemCallback);
     }
 
     @Provides

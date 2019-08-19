@@ -237,7 +237,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieItemOnC
     private void displayMovies(List<Movie> movies) {
         if (movies != null && !movies.isEmpty()){
             showMoviesView();
-            mMovieAdapter.setMovies(movies);
+            mMovieAdapter.submitList(movies);
         } else {
             showNoMoviesView();
         }
